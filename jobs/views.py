@@ -71,7 +71,8 @@ def index(request):
         
         jobs_under_review = this_family_jobs.filter(job_taken= True).filter(job_under_review= True).order_by('-id')[:10] 
         jobs_acceptably_done = this_family_jobs.filter(job_taken=True).filter(job_done=True).filter(job_passed_review= True).order_by('-id')[:10]
-        
+        jobs_review_rejected_by_admin = this_family_jobs.filter(job_taken=True).filter(job_done=True).filter(job_rejected_by_admin = True).order_by('-id')[:10]
+
         job_list = this_family_jobs.filter(job_taken= False).order_by('-id')
         
         job_gone = this_family_jobs.filter(job_taken= True).order_by('-id')[:10]
@@ -129,6 +130,7 @@ def index(request):
      'my_jobs_acceptably_done' : my_jobs_acceptably_done,
      'my_jobs_under_review' : my_jobs_under_review,
      'date_today' : timezone.datetime.now(),
+     'jobs_review_rejected_by_admin' : jobs_review_rejected_by_admin,
 
      }
     return HttpResponse(template.render(context, request))
@@ -204,8 +206,19 @@ def review_done(request):
         upd_rec.job_passed_review = True
         
         upd_rec.save()
-    else:
-        pass
+    elif int(pk) < 0:
+        pkid = str(-1*int(pk))
+        print(type(pkid), pkid, "else statement in review jobs")
+        
+        try:
+            upd_rec = JobPost.objects.get(pk=pkid)
+            upd_rec.job_rejected_by_admin = True
+            upd_rec.job_under_review = False
+            upd_rec.save()
+        except Exception as e:
+            print(e)
+            print('exception happened')
+        
 
     return index(request) 
 
