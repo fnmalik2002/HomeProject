@@ -1,0 +1,56 @@
+{% extends "jobs/base.html" %}
+{% block content %}
+<h2>Available Jobs</h2> 
+    {% if job_list %}
+{% comment %} {{job_list.values}} {% endcomment %}
+    {% for q in job_list %}
+   
+    <a href="{% url 'jobs:detail' q.id%}"
+    <div class="card mb-4 " style="width: 18rem;">
+      
+        <div class="card-body">
+            <small class="card-text">{{q.publish_date}}</small>
+            <h3 class="card-title">{{ q.job_title }}</h3> 
+            {% comment %} <p>{{q.job_detail}}</p>
+            <p>${{q.job_price}}</p>
+        
+        
+        <a href="{% url 'jobs:payments' %}" class="btn btn-success">Accept</a> {% endcomment %}
+        </div>
+    </div>
+    </a>
+          {% endfor %}
+    {% else %}
+    <div class="card-body">
+        <h2 class="card-title">No data available.</h2>
+        </div>
+    {% endif %}
+
+</div>
+{% comment %} taken jovs {% endcomment %}
+
+<h2>Jobs already claimed</h2> 
+    {% if job_gone %}
+{% comment %} {{job_list.values}} {% endcomment %}
+    {% for q in job_gone %}
+   
+    
+    <div class="card mb-4 bg-info " style="width: 18rem;">
+      
+        <div class="card-body">
+            <small class="card-text">{{q.publish_date}}</small>
+            <h3 class="card-title">{{ q.job_title }}</h3> 
+        </div>
+    </div>
+    
+          {% endfor %}
+    {% else %}
+    <div class="card-body">
+        <h2 class="card-title">No data available.</h2>
+        </div>
+    {% endif %}
+
+</div>
+{% endblock content %}
+
+

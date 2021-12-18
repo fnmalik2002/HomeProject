@@ -1,0 +1,32 @@
+{% extends "jobs/base.html" %}
+{% block content %}
+<h3>Jobs that {{user}} accepted</h3> 
+    {% if payment_list %}
+    {% comment %} {{payment_list.values}}  {% endcomment %}
+    {% for q in payment_list %}
+   
+<div class="card mb-4 " style="width: 18rem;">
+        
+    <div class="card-body">
+        <small class="card-text">{{q.publish_date}}</small>
+        <h3 class="card-title">{{ q.job_title }}</h3> 
+        <p>{{q.job_detail}}</p>
+        <p>${{q.job_price}}</p>
+    
+    
+    <a href="{% url 'jobs:payments'%}" class="btn btn-success">Mark as done</a>
+    <a href="{% url 'jobs:payments'%}" class="btn btn-danger">Quit this job</a>
+
+
+  </div>
+          {% endfor %}
+    {% else %}
+    <div class="card-body">
+        <h2 class="card-title">No data available.</h2>
+        </div>
+    {% endif %}
+
+</div>
+{% endblock content %}
+
+

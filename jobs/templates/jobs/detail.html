@@ -1,0 +1,44 @@
+{% extends "jobs/base.html" %}
+{% block content %}
+<h2>Job Details</h2> 
+
+{% if detail %}
+
+<div class="card mb-4 " style="width: 18rem;">
+      
+    <div class="card-body">
+        <small class="card-text">{{detail.publish_date}}</small>
+        <h3 class="card-title">{{ detail.job_title }}</h3> 
+        <p>{{detail.job_detail}}</p>
+        <p>${{detail.job_price}}</p>
+    <form action="{% url 'jobs:payments' %}" method='post'>
+        {% csrf_token %}
+        <p> Select your choice for this job</p>
+        
+        <input type="radio" id="accept" name="Choice" value="{{detail.id}}">
+        <label for="accept"> Accept</label>
+        <input type="radio" id="reject" name="Choice" value="-2">
+        <label for="reject"> Reject</label>
+        
+        <input type="submit" value="Submit" class="btn btn-success">
+{% comment %} 
+    <a href="{% url 'jobs:payments' %}" class="btn btn-success">Accept</a>  {% endcomment %}
+    </form>
+    </div>
+</div>
+
+
+{% else %}
+    <div class="card-body">
+        <h2 class="card-title">No data available.</h2>
+        </div>
+    {% endif %}
+
+
+
+
+
+
+
+
+    {% endblock content %}
