@@ -13,22 +13,27 @@
 </head>
 
 <body>
-    <ul class="nav justify-content-center|justify-content-end">
+    <div class="container">
+    <ul class="nav justify-content-start mb-5">
         <li class="nav-item">
-            <a class="nav-link active" href="#">Avaiable Jobs</a>
+            <a class="nav-link active" href="/">Dashboard</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#">Rules</a>
+            <a class="nav-link" href="">User :  {% block user %}
+                {% endblock user %}</a>
         </li>
+        
         <li class="nav-item">
-            <a class="nav-link" href="#">Login</a>
+            <a class="nav-link" href="/accounts/logout">Logout</a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link disabled" href="#">Quit</a>
-        </li>
+        
     </ul>
+</div>
+    <div class="container">
     {% block content %}
+    
     {% endblock content %}
+    </div>
 </body>
 
 </html>

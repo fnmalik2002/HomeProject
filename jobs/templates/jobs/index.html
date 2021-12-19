@@ -1,56 +1,83 @@
-{% extends "jobs/base.html" %}
-{% block content %}
-<h2>Available Jobs</h2> 
-    {% if job_list %}
-{% comment %} {{job_list.values}} {% endcomment %}
-    {% for q in job_list %}
-   
-    <a href="{% url 'jobs:detail' q.id%}"
+{% extends "jobs/base.html" %} {% block user %}
+<strong>{{user}}</strong> {% endblock user %} {% block content %}
+
+<h4 class="mt-4 mb-4">Available Jobs</h4>
+{% if job_list %} {% for q in job_list %}
+
+<a class="btn btn-light" href="{% url 'jobs:detail' q.id%}">
     <div class="card mb-4 " style="width: 18rem;">
-      
+
         <div class="card-body">
             <small class="card-text">{{q.publish_date}}</small>
-            <h3 class="card-title">{{ q.job_title }}</h3> 
-            {% comment %} <p>{{q.job_detail}}</p>
+            <h3 class="card-title">{{ q.job_title }}</h3>
+            <p>{{q.job_detail}}</p>
             <p>${{q.job_price}}</p>
-        
-        
-        <a href="{% url 'jobs:payments' %}" class="btn btn-success">Accept</a> {% endcomment %}
+            <form action="{% url 'jobs:payments' %}" method='post'>
+                {% csrf_token %}
+                <p> Select your choice for this job</p>
+                <input type="radio" id="accept" name="Choice" value="{{q.id}}">
+                <label for="accept"> Accept</label>
+                <input type="radio" id="reject" name="Choice" value="-2">
+                <label for="reject"> Reject</label>
+                <input type="submit" value="Submit" class="btn btn-success">
+            </form>
         </div>
     </div>
-    </a>
-          {% endfor %}
-    {% else %}
+</a>
+{% endfor %} {% else %}
+<div class="card mb-4 bg-success " style="width: 18rem;">
     <div class="card-body">
-        <h2 class="card-title">No data available.</h2>
-        </div>
-    {% endif %}
-
+        <h4 class="card-title">No data available.</h4>
+    </div>
 </div>
-{% comment %} taken jovs {% endcomment %}
+{% endif %}
 
-<h2>Jobs already claimed</h2> 
-    {% if job_gone %}
-{% comment %} {{job_list.values}} {% endcomment %}
-    {% for q in job_gone %}
-   
-    
+<h4 class="mt-4 mb-4">Your unfinished jobs </h4>
+{% if my_unfinished_jobs %} {% comment %} {{job_list.values}} {% endcomment %} {% for q in my_unfinished_jobs %}
+
+
+<a class="btn btn-info" href="{% url 'jobs:payments' %}">
     <div class="card mb-4 bg-info " style="width: 18rem;">
-      
+
         <div class="card-body">
+
             <small class="card-text">{{q.publish_date}}</small>
-            <h3 class="card-title">{{ q.job_title }}</h3> 
+            <h3 class="card-title">{{ q.job_title }}</h3>
+            <p> {{q.job_detail}}</p>
+            <p> ${{q.job_price}}</p>
+            <p> Job taken by : {{q.job_taker}}</p>
         </div>
     </div>
-    
-          {% endfor %}
-    {% else %}
+
+</a>
+{% endfor %} {% else %}
+<div class="card mb-4 bg-info " style="width: 18rem;">
     <div class="card-body">
-        <h2 class="card-title">No data available.</h2>
-        </div>
-    {% endif %}
-
+        <h4 class="card-title">No data available.</h4>
+    </div>
 </div>
-{% endblock content %}
+{% endif %}
 
 
+<h4 class="mt-4 mb-4"> Your finished jobs </h4>
+{% if my_done_jobs %} {% for q in my_done_jobs %}
+<div class="card mb-4 bg-success " style="width: 18rem;">
+    <div class="card-body">
+        <small>By </small>
+        <strong>{{q.job_taker}}</strong>
+        <small>on: {{q.job_done_date}}</small>
+
+        <h3 class="card-title">{{ q.job_title }}</h3>
+        <small class="card-text">Post date : {{q.publish_date}}</small>
+        <p> {{q.job_detail}}</p>
+        <p> ${{q.job_price}}</p>
+    </div>
+</div>
+
+{% endfor %} {% else %}
+<div class="card mb-4 bg-success " style="width: 18rem;">
+    <div class="card-body">
+        <h4 class="card-title">No data available.</h4>
+    </div>
+</div>
+{% endif %} {% endblock content %}

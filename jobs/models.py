@@ -12,6 +12,8 @@ class JobPost(models.Model):
     job_detail = models.CharField(max_length=200)
     job_price = models.IntegerField(default=0)
     job_taken = models.BooleanField(default=False)
+    job_done = models.BooleanField(default=False)
+    job_done_date = models.DateTimeField('date job completed', null=True, blank=True)
     job_taker = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     def __str__(self):
         return self.job_title

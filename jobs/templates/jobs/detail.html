@@ -1,4 +1,7 @@
 {% extends "jobs/base.html" %}
+{% block user %}
+<strong>{{user}}</strong>
+    {% endblock user %}
 {% block content %}
 <h2>Job Details</h2> 
 
@@ -21,8 +24,7 @@
         <label for="reject"> Reject</label>
         
         <input type="submit" value="Submit" class="btn btn-success">
-{% comment %} 
-    <a href="{% url 'jobs:payments' %}" class="btn btn-success">Accept</a>  {% endcomment %}
+
     </form>
     </div>
 </div>
