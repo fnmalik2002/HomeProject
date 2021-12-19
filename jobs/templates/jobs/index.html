@@ -1,83 +1,95 @@
 {% extends "jobs/base.html" %} {% block user %}
 <strong>{{user}}</strong> {% endblock user %} {% block content %}
 
-<h4 class="mt-4 mb-4">Available Jobs</h4>
-{% if job_list %} {% for q in job_list %}
+<h4 class="mt-4 mb-4 ">Available Jobs</h4>
 
-<a class="btn btn-light" href="{% url 'jobs:detail' q.id%}">
-    <div class="card mb-4 " style="width: 18rem;">
 
+<div class="row">
+
+    {% if job_list %} {% for q in job_list %}
+    <div class="card mb-4 me-4" style="width: 16rem;">
+        <!-- <a class="btn text-start" href="{% url 'jobs:detail' q.id%}"> -->
         <div class="card-body">
-            <small class="card-text">{{q.publish_date}}</small>
+            <small class="card-text text-dark">{{q.publish_date}}</small>
             <h3 class="card-title">{{ q.job_title }}</h3>
-            <p>{{q.job_detail}}</p>
-            <p>${{q.job_price}}</p>
-            <form action="{% url 'jobs:payments' %}" method='post'>
+            <p class="text-dark">{{q.job_detail}}</p>
+            <h2 class="text-danger">${{q.job_price}}</h2>
+            <!-- </a> -->
+            <form class="text-center" action="{% url 'jobs:payments' %}" method='post'>
                 {% csrf_token %}
-                <p> Select your choice for this job</p>
-                <input type="radio" id="accept" name="Choice" value="{{q.id}}">
-                <label for="accept"> Accept</label>
-                <input type="radio" id="reject" name="Choice" value="-2">
-                <label for="reject"> Reject</label>
-                <input type="submit" value="Submit" class="btn btn-success">
+
+                <input type="radio" id="accept" name="Choice" value="{{q.id}}" checked style="display: none;">
+                <label for="accept" style="display: none;"> Accept</label>
+                <!-- <input type="radio" id="reject" name="Choice" value="-2">
+                <label for="reject"> Reject</label> -->
+                <input type="submit" value="Accept" class="btn btn-info">
             </form>
         </div>
     </div>
-</a>
-{% endfor %} {% else %}
-<div class="card mb-4 bg-success " style="width: 18rem;">
-    <div class="card-body">
-        <h4 class="card-title">No data available.</h4>
-    </div>
-</div>
-{% endif %}
+    {% endfor %} {% else %}
 
-<h4 class="mt-4 mb-4">Your unfinished jobs </h4>
-{% if my_unfinished_jobs %} {% comment %} {{job_list.values}} {% endcomment %} {% for q in my_unfinished_jobs %}
-
-
-<a class="btn btn-info" href="{% url 'jobs:payments' %}">
-    <div class="card mb-4 bg-info " style="width: 18rem;">
+    <div class="card mb-4 me-4" style="width: 16rem;">
 
         <div class="card-body">
+            <h4 class="card-title">No data available.</h4>
+        </div>
+    </div>
+    {% endif %}
 
-            <small class="card-text">{{q.publish_date}}</small>
+</div>
+
+
+
+<h4 class="mt-4 mb-4">Your unfinished jobs </h4>
+<div class="row">
+    {% if my_unfinished_jobs %} {% for q in my_unfinished_jobs %}
+    <div class="card mb-4 me-4" style="width: 16rem;">
+
+        <div class="card-body">
+            <small class="card-text text-dark">{{q.publish_date}}</small>
             <h3 class="card-title">{{ q.job_title }}</h3>
-            <p> {{q.job_detail}}</p>
-            <p> ${{q.job_price}}</p>
-            <p> Job taken by : {{q.job_taker}}</p>
+            <p class="text-dark">{{q.job_detail}}</p>
+            <h2 class="text-danger">${{q.job_price}}</h2>
+            <div class="text-center">
+                <a class="btn bg-info" role="button" href="{% url 'jobs:payments' %}">Action</a>
+            </div>
+        </div>
+
+    </div>
+
+
+    {% endfor %} {% else %}
+    <div class="card mb-4 me-4" style="width: 16rem;">
+        <div class="card-body">
+            <h4 class="card-title">No data available.</h4>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<h4 class="mt-4 mb-4"> Your finished jobs </h4>
+<div class="row">
+    {% if my_done_jobs %} {% for q in my_done_jobs %}
+    <div class="card mb-4 me-4" style="width: 16rem;">
+        <div class="card-body">
+            <p>Date Finished </p>
+            <small class="card-text text-dark">{{q.job_done_date}}</small>
+
+            <h3 class="card-title">{{ q.job_title }}</h3>
+            <div class="card-text">
+                <small class="card-text text-dark">{{q.publish_date}}</small>
+                <p class="text-dark"> {{q.job_detail}}</p>
+                <h2 class="text-danger"> ${{q.job_price}}</h2>
+            </div>
         </div>
     </div>
 
-</a>
-{% endfor %} {% else %}
-<div class="card mb-4 bg-info " style="width: 18rem;">
-    <div class="card-body">
-        <h4 class="card-title">No data available.</h4>
+    {% endfor %} {% else %}
+    <div class="card mb-4 me-4 " style="width: 16rem;">
+        <div class="card-body">
+            <h4 class="card-title">No data available.</h4>
+        </div>
     </div>
+    {% endif %}
 </div>
-{% endif %}
-
-
-<h4 class="mt-4 mb-4"> Your finished jobs </h4>
-{% if my_done_jobs %} {% for q in my_done_jobs %}
-<div class="card mb-4 bg-success " style="width: 18rem;">
-    <div class="card-body">
-        <small>By </small>
-        <strong>{{q.job_taker}}</strong>
-        <small>on: {{q.job_done_date}}</small>
-
-        <h3 class="card-title">{{ q.job_title }}</h3>
-        <small class="card-text">Post date : {{q.publish_date}}</small>
-        <p> {{q.job_detail}}</p>
-        <p> ${{q.job_price}}</p>
-    </div>
-</div>
-
-{% endfor %} {% else %}
-<div class="card mb-4 bg-success " style="width: 18rem;">
-    <div class="card-body">
-        <h4 class="card-title">No data available.</h4>
-    </div>
-</div>
-{% endif %} {% endblock content %}
+{% endblock content %}
