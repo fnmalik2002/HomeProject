@@ -1,4 +1,6 @@
 {% extends "jobs/base.html" %}
+{% block user %}
+<strong>{{user}}</strong> {% endblock user %} 
 {% block content %}
 <h3>Unfinished jobs for {{user}}</h3> 
     {% if payment_list %}

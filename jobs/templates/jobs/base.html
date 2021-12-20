@@ -13,22 +13,33 @@
 </head>
 
 <body>
-    <div class="container">
-    <ul class="nav justify-content-start mb-5">
-        <li class="nav-item">
-            <a class="nav-link active" href="/">Dashboard</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="">User :  {% block user %}
-                {% endblock user %}</a>
-        </li>
+    <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <img src="{%static 'jobs/logo.png'%}" width="32" height="32" class="d-inline-block align-top" alt="">
+                
+            </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mynavbar">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="mynavbar">
+            <ul class="navbar-nav me-auto">
+              <li class="nav-item">
+                <a class="nav-link" href="/">Dashboard</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/accounts/login/">Logout :  {% block user %}{% endblock user %}</a>
+              </li>
+              
+            </ul>
+            <form class="d-flex">
+              <input class="form-control me-2" type="text" placeholder="Search">
+              <button class="btn btn-primary" type="button">Search</button>
+            </form>
+          </div>
+        </div>
+      </nav>
         
-        <li class="nav-item">
-            <a class="nav-link" href="/accounts/logout">Logout</a>
-        </li>
-        
-    </ul>
-</div>
     <div class="container">
     {% block content %}
     
