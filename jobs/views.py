@@ -88,7 +88,8 @@ def payments(request):
     'payment_list': payment_list,
     'user': usr,
      }
-    return HttpResponse(template.render(context, request))
+    # return HttpResponse(template.render(context, request))
+    return index(request)
 
 def reset_password(request): 
     template = loader.get_template('registration/reset.html')
@@ -121,7 +122,9 @@ def mark_done(request):
         
 
     return index(request)
-    
+def mark_not_done(request):
+    print("Not done selected")
+    return index(request)
 
 
     
