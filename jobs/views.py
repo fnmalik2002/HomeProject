@@ -8,6 +8,7 @@ from .models import JobPost, Payments
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 import datetime
+from django.db.models import Avg, Count, Min, Sum
 
 # Create your views here.
 @login_required
@@ -21,14 +22,23 @@ def index(request):
         job_gone = JobPost.objects.filter(job_taken= True).order_by('-id')[:10]
         my_unfinished_jobs = JobPost.objects.filter(job_taker=user).filter(job_taken=True).filter(job_done=False).order_by('-id')[:10]
         my_done_jobs = JobPost.objects.filter(job_taker=user).filter(job_done=True).order_by('-id')[:10]
+        my_money_under_review_this_month = JobPost.objects.filter(job_taker=user).filter(job_taken=True).filter(job_done=False).aggregate(Sum('job_price'))
+        my_total_this_mont = JobPost.objects.filter(job_taker=user).filter(job_taken=True).filter(job_done=True).aggregate(Sum('job_price'))
+        unclaimed = JobPost.objects.filter(job_taken= False).aggregate(Sum('job_price'))
+
     else:
 
         job_list = JobPost.objects.filter(job_taken= False).order_by('-id')[:10]  
         job_gone = JobPost.objects.filter(job_taken= True).order_by('-id')[:10]
         my_unfinished_jobs = JobPost.objects.filter(job_taker=user).filter(job_taken=True).filter(job_done=False).order_by('-id')[:10]
         my_done_jobs = JobPost.objects.filter(job_taker=user).filter(job_done=True).order_by('-id')[:10]
-
+        my_money_under_review_this_month = JobPost.objects.filter(job_taker=user).filter(job_taken=True).filter(job_done=False).aggregate(Sum('job_price'))
+        my_total_this_mont = JobPost.objects.filter(job_taker=user).filter(job_taken=True).filter(job_done=True).aggregate(Sum('job_price'))
+        unclaimed = JobPost.objects.filter(job_taken= False).aggregate(Sum('job_price'))
+    
     template = loader.get_template('jobs/index.html')
+    print("Money", my_money_under_review_this_month)
+    
     if request.user == 'AnonymousUser':
         usr = "None"
     else:
@@ -39,6 +49,9 @@ def index(request):
      'my_unfinished_jobs' : my_unfinished_jobs,
      'my_done_jobs' : my_done_jobs,
      'user': usr,
+     'my_money_under_review_this_month':my_money_under_review_this_month,
+     'my_total_this_mont': my_total_this_mont,
+     'unclaimed':unclaimed,
      }
     return HttpResponse(template.render(context, request))
 

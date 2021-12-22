@@ -3,6 +3,7 @@
 <strong>{{user}}</strong>
     {% endblock user %}
 {% block content %}
-  <p>You are safely logged out!</p>
-  <a href="{% url 'login'%}">Login</a>
+  <h2>Logged Out</h2>
+  <p>Thanks for your visit</p>
+  <a href="{% url 'login'%}">LogIn</a>
 {% endblock %}
