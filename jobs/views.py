@@ -13,7 +13,7 @@ from django.db.models import Avg, Count, Min, Sum
 # Create your views here.
 @login_required
 def index(request):
-    print(request.user)
+    print("user type : ",type(request.user))
     user = User.objects.get(username = request.user)
     
     if request.user.is_superuser:
@@ -35,6 +35,7 @@ def index(request):
         my_money_under_review_this_month = JobPost.objects.filter(job_taker=user).filter(job_taken=True).filter(job_done=False).aggregate(Sum('job_price'))
         my_total_this_mont = JobPost.objects.filter(job_taker=user).filter(job_taken=True).filter(job_done=True).aggregate(Sum('job_price'))
         unclaimed = JobPost.objects.filter(job_taken= False).aggregate(Sum('job_price'))
+    
     
     template = loader.get_template('jobs/index.html')
     print("Money", my_money_under_review_this_month)
@@ -120,15 +121,29 @@ def mark_done(request):
         upd_rec.job_done = True
         upd_rec.job_done_date = datetime.datetime.now()
         upd_rec.save()  
-    else:
+    elif int(pk) < 0:
         pkid = str(-1*int(pk))
         print(type(pkid), pkid, "else statement")
         
         try:
             upd_rec = JobPost.objects.get(pk=pkid)
             upd_rec.job_taken = False
-            # upd_rec.job_taker = ""
+            
+            upd_rec.job_taker = User.objects.get(username = 'nouser')
             upd_rec.save()
+        except Exception as e:
+            print(e)
+            print('exception happened')
+    elif int(pk)==0:
+        try:
+            jobss = JobPost.objects.all()
+            print(jobss)
+            for job in jobss:
+                print(job)
+                job.job_taken = False
+                job.job_done = False
+                job.job_taker = User.objects.get(username = 'nouser')
+                job.save()
         except Exception as e:
             print(e)
             print('exception happened')

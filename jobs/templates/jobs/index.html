@@ -1,5 +1,5 @@
 {% extends "jobs/base.html" %} {% load static %} {% block user %}
-<strong>{{user}}</strong> {% endblock user %} {% block content %}
+<strong>{{user.first_name}} {{user.last_name}}</strong> {% endblock user %} {% block content %}
 <div class="container bg-light">
     <h4 class="mt-4 mb-4 pt-3">Jobs Available</h4>
 
@@ -125,51 +125,82 @@
 </div>
 {% endblock content %} {% block sidebar %}
 <!-- <div class="col"> -->
-<div class="d-flex flex-column ">
+
+<div class="d-flex flex-column " style="position: fixed; right: 0; bottom: 0;">
     <div class=" mt-4 text-center">
+        {% if user.first_name == "Faizan" %}
         <div class="" style="width: 160px;">
-            <img class="" src="{% static 'jobs/unclaimed.png'%}" style="width: 48px; height: 48px;" alt="Card image">
+
             <div class="">
-                <strong class="">Un Claimed</strong>
-                <p class="">${{unclaimed.job_price__sum}}</p>
+                <form id="3" class="m-1" action="{% url 'jobs:mark_not_done' %}" method='post'>
+                    {% csrf_token %}
+                    <input type="radio" id="accept2" name="Choice" value=0 checked style="display: none;">
+                    <label for="accept2" style="display: none;"> Reset Jobs</label>
+
+
+                    <input type="submit" value="Reset All" class="btn btn-sq-lg " style="background-color:coral;">
+                </form>
 
             </div>
         </div>
+        {% endif%}
+
+        <div class="d-flex flex-column ">
+            <div class=" mt-4 text-center">
+                <div class="" style="width: 160px;">
+                    <img class="" src="{% static 'jobs/unclaimed.png'%}" style="width: 48px; height: 48px;" alt="Card image">
+                    <div class="">
+                        <strong class="">Un Claimed</strong> {% if unclaimed.job_price__sum != None %}
+                        <p class="">${{unclaimed.job_price__sum}}</p>
+                        {% else %}
+                        <p class="">$0</p>
+                        {% endif %}
 
 
-    </div>
+                    </div>
+                </div>
 
-    <div class=" mt-4 text-center">
-        <div class="" style="width: 160px;">
-            <img class="" src="{% static 'jobs/underreview.png'%}" style="width: 48px; height: 48px;" alt="Card image">
-            <div class="">
-                <strong class="">Under Review</strong>
-                <p class="">${{my_money_under_review_this_month.job_price__sum}}</p>
 
             </div>
-        </div>
 
+            <div class=" mt-4 text-center">
+                <div class="" style="width: 160px;">
+                    <img class="" src="{% static 'jobs/underreview.png'%}" style="width: 48px; height: 48px;" alt="Card image">
+                    <div class="">
+                        <strong class="">Under Review</strong> {% if my_money_under_review_this_month.job_price__sum != None %}
+                        <p class="">${{my_money_under_review_this_month.job_price__sum}}</p>
+                        {% else %}
+                        <p class="">$0</p>
+                        {% endif %}
 
-    </div>
+                    </div>
+                </div>
 
-
-    <div class=" mt-4 text-center">
-        <div class="" style="width: 160px;">
-            <img class="" src="{% static 'jobs/mymoney.png'%}" style="width: 48px; height: 48px;" alt="Card image">
-            <div class="">
-                <strong class="">Your Money</strong>
-                <p class="">${{my_total_this_mont.job_price__sum}}</p>
 
             </div>
+
+
+            <div class=" mt-4 text-center">
+                <div class="" style="width: 160px;">
+                    <img class="" src="{% static 'jobs/mymoney.png'%}" style="width: 48px; height: 48px;" alt="Card image">
+                    <div class="">
+                        <strong class="">Your Money</strong> {% if my_total_this_mont.job_price__sum != None %}
+                        <p class="">${{my_total_this_mont.job_price__sum}}</p>
+                        {% else %}
+                        <p class="">$0</p>
+                        {% endif %}
+
+
+                    </div>
+                </div>
+
+
+            </div>
+
+
         </div>
-
-
-    </div>
-
-
-</div>
-<!-- </div> -->
+        <!-- </div> -->
 
 
 
-{% endblock sidebar %}
+        {% endblock sidebar %}
