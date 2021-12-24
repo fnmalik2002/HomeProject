@@ -45,10 +45,11 @@
     </div>
 
 </div>
+{% if user.is_staff %}
 <div class="container bg-light">
-    <h4 class="mt-4 mb-4 pt-3">Jobs you accepted </h4>
+    <h4 class="mt-4 mb-4 pt-3">Jobs someone accepted</h4>
     <div class="row">
-        {% if my_unfinished_jobs %} {% for q in my_unfinished_jobs %}
+        {% if all_unfinished_jobs %} {% for q in all_unfinished_jobs %}
         <div class="card ms-4 mb-3 shadow bg-body rounded p-0" style="width: 14rem;">
             <a class="btn p-0" href="{% url 'jobs:detail' q.id%}" style="width: 100%;">
                 <div class="card-body p-0 ">
@@ -59,29 +60,9 @@
 
                     <h4 class="card-title pb-3 text-center">{{ q.job_title }}</h4>
 
-                    <!-- <p class="text-dark">{{q.job_detail}}</p> -->
+                    <p class="text-dark">Taken by : {{q.job_taker.first_name}}</p>
             </a>
-            <div class="d-flex d-flex-row justify-content-start p-0">
-                <form id="1" class="px-3 mt-1" action="{% url 'jobs:mark_done' %}" method='post' style="background-color:gray; width: 50%;">
-                    {% csrf_token %}
 
-
-                    <input type="radio" id="accept" name="Choice" value={{q.id}} checked style="display: none;">
-                    <label for="accept" style="display: none;"> Mark Done</label>
-
-                    <input type="submit" value=" Done " class="btn text-white" style="background-color:gray;">
-                </form>
-                <form id="2" class="px-3 mt-1" action="{% url 'jobs:mark_not_done' %}" method='post' style="background-color:darkgray; width: 50%;">
-                    {% csrf_token %}
-                    <input type="radio" id="accept2" name="Choice" value=-{{q.id}} checked style="display: none;">
-                    <label for="accept2" style="display: none;"> Return Job</label>
-
-
-                    <input type="submit" value="Return" class="btn text-white" style="background-color:darkgray;">
-                </form>
-
-                <!-- <a class="btn bg-info" role="button" href="{% url 'jobs:payments' %}">Action</a> -->
-            </div>
             </div>
 
         </div>
@@ -96,6 +77,92 @@
         </div>
         {% endif %}
     </div>
+
+</div>
+<div class="container bg-light">
+    <h4 class="mt-4 mb-4 pt-3"> Jobs someone finished </h4>
+    <div class="row">
+        {% if all_done_jobs %} {% for q in all_done_jobs %}
+        <div class="card ms-4 mb-3 shadow bg-body rounded p-0" style="width: 14rem;">
+            <a class="btn p-0" href="{% url 'jobs:detail' q.id%}" style="width: 100%;">
+                <div class="card-body p-0 ">
+                    <div class="d-flex justify-content-between">
+                        <small class="card-text text-black-50 mt-1 ms-1">{{q.job_done_date.date}}</small>
+                        <h3 class="text-danger mt-1 me-1 "><small>$</small>{{q.job_price}}</h3>
+                    </div>
+
+                    <h4 class="card-title pb-3 text-center">{{ q.job_title }}</h4>
+
+                    <p class="text-dark">Done by : {{q.job_taker.first_name}}</p>
+
+
+                </div>
+                <a class="btn p-0" href="{% url 'jobs:detail' q.id%}" style="width: 100%;"></a>
+        </div>
+
+        {% endfor %} {% else %}
+        <div class="card ms-4 mb-3 shadow bg-body rounded p-0" style="width: 14rem;">
+            <div class="card-body mt-2 pb-0">
+                <p class="card-title pb-3 text-center">Nothing here</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+
+{% else %}
+
+<h4 class="mt-4 mb-4 pt-3">Jobs you accepted </h4>
+<div class="row">
+    {% if my_unfinished_jobs %} {% for q in my_unfinished_jobs %}
+    <div class="card ms-4 mb-3 shadow bg-body rounded p-0" style="width: 14rem;">
+        <a class="btn p-0" href="{% url 'jobs:detail' q.id%}" style="width: 100%;">
+            <div class="card-body p-0 ">
+                <div class="d-flex justify-content-between">
+                    <small class="card-text text-black-50 mt-1 ms-1">{{q.publish_date.date}}</small>
+                    <h3 class="text-danger mt-1 me-1 "><small>$</small>{{q.job_price}}</h3>
+                </div>
+
+                <h4 class="card-title pb-3 text-center">{{ q.job_title }}</h4>
+
+                <!-- <p class="text-dark">{{q.job_detail}}</p> -->
+        </a>
+        <div class="d-flex d-flex-row justify-content-start p-0">
+            <form id="1" class="px-3 mt-1" action="{% url 'jobs:mark_done' %}" method='post' style="background-color:gray; width: 50%;">
+                {% csrf_token %}
+
+
+                <input type="radio" id="accept" name="Choice" value={{q.id}} checked style="display: none;">
+                <label for="accept" style="display: none;"> Mark Done</label>
+
+                <input type="submit" value=" Done " class="btn text-white" style="background-color:gray;">
+            </form>
+            <form id="2" class="px-3 mt-1" action="{% url 'jobs:mark_not_done' %}" method='post' style="background-color:darkgray; width: 50%;">
+                {% csrf_token %}
+                <input type="radio" id="accept2" name="Choice" value=-{{q.id}} checked style="display: none;">
+                <label for="accept2" style="display: none;"> Return Job</label>
+
+
+                <input type="submit" value="Return" class="btn text-white" style="background-color:darkgray;">
+            </form>
+
+            <!-- <a class="btn bg-info" role="button" href="{% url 'jobs:payments' %}">Action</a> -->
+        </div>
+        </div>
+
+    </div>
+
+
+
+    {% endfor %} {% else %}
+    <div class="card ms-4 mb-3 shadow bg-body rounded p-0" style="width: 14rem;">
+        <div class="card-body mt-2 pb-0">
+            <p class="card-title pb-3 text-center">Nothing here</p>
+        </div>
+    </div>
+    {% endif %}
+</div>
 
 </div>
 <div class="container bg-light">
@@ -128,13 +195,13 @@
         {% endif %}
     </div>
 </div>
-{% endblock content %} {% block sidebar %}
+{% endif %} {% endblock content %} {% block sidebar %}
 <!-- <div class="col"> -->
 
 <div class="d-flex flex-column " style="position: fixed; right: 0; bottom: 0;">
     <div class=" mt-4 text-center">
 
-        {% if user.is_superuser %}
+        {% if user.is_staff %}
 
         <div class="" style="width: 160px;">
 

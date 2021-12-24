@@ -16,30 +16,40 @@ def index(request):
     print("user type : ",type(request.user))
     user = User.objects.get(username = request.user)
     user_group = Group.objects.get(user = request.user)
-    print('user_group', user_group)
+    print('user_group \n', user_group)
     
     users_in_a_group = User.objects.filter(groups=user_group)
-    def job_creator(users_in_a_group):
+    print('users in group \n',users_in_a_group )
+    def job_creators(users_in_a_group):
+        poster = None
         for u in users_in_a_group:
             job_list_1 = JobPost.objects.filter(job_creator = u).order_by('-id')[:10] 
-            print(type(u), u, job_list_1, len(job_list_1))
+            print (u, job_list_1, len(job_list_1))
             if len(job_list_1) > 0:
-                print("job creator is", u)
-                return u
-    
-    
+                print("job creator is", u.id)
+                poster = u
+                print(u)
+                
+            else:
+                print('None')
+
+        return poster
+                
 
     
-    this_family_jobs = JobPost.objects.filter(job_creator=job_creator(users_in_a_group))
+    this_family_jobs = JobPost.objects.filter(job_creator=job_creators(users_in_a_group))
 
-    # print('this_family_jobs : ', this_family_jobs)
+    print('this_family_jobs : ', this_family_jobs)
     
     if request.user.is_superuser:
         
         job_list = this_family_jobs.filter(job_taken= False).order_by('-id')[:10] 
         job_gone = this_family_jobs.filter(job_taken= True).order_by('-id')[:10]
         my_unfinished_jobs = this_family_jobs.filter(job_taker=user).filter(job_taken=True).filter(job_done=False).order_by('-id')[:10]
+        all_unfinished_jobs = this_family_jobs.filter(job_taken=True).filter(job_done=False).order_by('-id')[:10]
+
         my_done_jobs = this_family_jobs.filter(job_taker=user).filter(job_done=True).order_by('-id')[:10]
+        all_done_jobs = this_family_jobs.filter(job_taken=True).filter(job_done=True).order_by('-id')[:10]
         my_money_under_review_this_month = this_family_jobs.filter(job_taker=user).filter(job_taken=True).filter(job_done=False).aggregate(Sum('job_price'))
         my_total_this_mont = this_family_jobs.filter(job_taker=user).filter(job_taken=True).filter(job_done=True).aggregate(Sum('job_price'))
         unclaimed = this_family_jobs.filter(job_taken= False).aggregate(Sum('job_price'))
@@ -49,7 +59,10 @@ def index(request):
         job_list = this_family_jobs.filter(job_taken= False).order_by('-id')[:10]  
         job_gone = this_family_jobs.filter(job_taken= True).order_by('-id')[:10]
         my_unfinished_jobs = this_family_jobs.filter(job_taker=user).filter(job_taken=True).filter(job_done=False).order_by('-id')[:10]
+        all_unfinished_jobs = this_family_jobs.filter(job_taken=True).filter(job_done=False).order_by('-id')[:10]
         my_done_jobs = this_family_jobs.filter(job_taker=user).filter(job_done=True).order_by('-id')[:10]
+        all_done_jobs = this_family_jobs.filter(job_taken=True).filter(job_done=True).order_by('-id')[:10]
+        
         my_money_under_review_this_month = this_family_jobs.filter(job_taker=user).filter(job_taken=True).filter(job_done=False).aggregate(Sum('job_price'))
         my_total_this_mont = this_family_jobs.filter(job_taker=user).filter(job_taken=True).filter(job_done=True).aggregate(Sum('job_price'))
         unclaimed = this_family_jobs.filter(job_taken= False).aggregate(Sum('job_price'))
@@ -63,14 +76,16 @@ def index(request):
     else:
         usr = request.user
     context = {
-    'job_list': job_list,
+     'job_list': job_list,
      'job_gone' : job_gone,
      'my_unfinished_jobs' : my_unfinished_jobs,
      'my_done_jobs' : my_done_jobs,
      'user': usr,
      'my_money_under_review_this_month':my_money_under_review_this_month,
      'my_total_this_mont': my_total_this_mont,
-     'unclaimed':unclaimed,
+     'unclaimed': unclaimed,
+     'all_unfinished_jobs' : all_unfinished_jobs,
+     'all_done_jobs' : all_done_jobs,
      }
     return HttpResponse(template.render(context, request))
 
