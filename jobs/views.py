@@ -6,8 +6,8 @@ from django.shortcuts import render, get_object_or_404
 # from django.views import generic
 from .models import JobPost, Payments
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
-import datetime
+from django.contrib.auth.models import User, Group
+from django.utils import timezone
 from django.db.models import Avg, Count, Min, Sum
 
 # Create your views here.
@@ -15,26 +15,44 @@ from django.db.models import Avg, Count, Min, Sum
 def index(request):
     print("user type : ",type(request.user))
     user = User.objects.get(username = request.user)
+    user_group = Group.objects.get(user = request.user)
+    print('user_group', user_group)
+    
+    users_in_a_group = User.objects.filter(groups=user_group)
+    def job_creator(users_in_a_group):
+        for u in users_in_a_group:
+            job_list_1 = JobPost.objects.filter(job_creator = u).order_by('-id')[:10] 
+            print(type(u), u, job_list_1, len(job_list_1))
+            if len(job_list_1) > 0:
+                print("job creator is", u)
+                return u
+    
+    
+
+    
+    this_family_jobs = JobPost.objects.filter(job_creator=job_creator(users_in_a_group))
+
+    # print('this_family_jobs : ', this_family_jobs)
     
     if request.user.is_superuser:
         
-        job_list = JobPost.objects.filter(job_taken= False).order_by('-id')[:10] 
-        job_gone = JobPost.objects.filter(job_taken= True).order_by('-id')[:10]
-        my_unfinished_jobs = JobPost.objects.filter(job_taker=user).filter(job_taken=True).filter(job_done=False).order_by('-id')[:10]
-        my_done_jobs = JobPost.objects.filter(job_taker=user).filter(job_done=True).order_by('-id')[:10]
-        my_money_under_review_this_month = JobPost.objects.filter(job_taker=user).filter(job_taken=True).filter(job_done=False).aggregate(Sum('job_price'))
-        my_total_this_mont = JobPost.objects.filter(job_taker=user).filter(job_taken=True).filter(job_done=True).aggregate(Sum('job_price'))
-        unclaimed = JobPost.objects.filter(job_taken= False).aggregate(Sum('job_price'))
+        job_list = this_family_jobs.filter(job_taken= False).order_by('-id')[:10] 
+        job_gone = this_family_jobs.filter(job_taken= True).order_by('-id')[:10]
+        my_unfinished_jobs = this_family_jobs.filter(job_taker=user).filter(job_taken=True).filter(job_done=False).order_by('-id')[:10]
+        my_done_jobs = this_family_jobs.filter(job_taker=user).filter(job_done=True).order_by('-id')[:10]
+        my_money_under_review_this_month = this_family_jobs.filter(job_taker=user).filter(job_taken=True).filter(job_done=False).aggregate(Sum('job_price'))
+        my_total_this_mont = this_family_jobs.filter(job_taker=user).filter(job_taken=True).filter(job_done=True).aggregate(Sum('job_price'))
+        unclaimed = this_family_jobs.filter(job_taken= False).aggregate(Sum('job_price'))
 
     else:
 
-        job_list = JobPost.objects.filter(job_taken= False).order_by('-id')[:10]  
-        job_gone = JobPost.objects.filter(job_taken= True).order_by('-id')[:10]
-        my_unfinished_jobs = JobPost.objects.filter(job_taker=user).filter(job_taken=True).filter(job_done=False).order_by('-id')[:10]
-        my_done_jobs = JobPost.objects.filter(job_taker=user).filter(job_done=True).order_by('-id')[:10]
-        my_money_under_review_this_month = JobPost.objects.filter(job_taker=user).filter(job_taken=True).filter(job_done=False).aggregate(Sum('job_price'))
-        my_total_this_mont = JobPost.objects.filter(job_taker=user).filter(job_taken=True).filter(job_done=True).aggregate(Sum('job_price'))
-        unclaimed = JobPost.objects.filter(job_taken= False).aggregate(Sum('job_price'))
+        job_list = this_family_jobs.filter(job_taken= False).order_by('-id')[:10]  
+        job_gone = this_family_jobs.filter(job_taken= True).order_by('-id')[:10]
+        my_unfinished_jobs = this_family_jobs.filter(job_taker=user).filter(job_taken=True).filter(job_done=False).order_by('-id')[:10]
+        my_done_jobs = this_family_jobs.filter(job_taker=user).filter(job_done=True).order_by('-id')[:10]
+        my_money_under_review_this_month = this_family_jobs.filter(job_taker=user).filter(job_taken=True).filter(job_done=False).aggregate(Sum('job_price'))
+        my_total_this_mont = this_family_jobs.filter(job_taker=user).filter(job_taken=True).filter(job_done=True).aggregate(Sum('job_price'))
+        unclaimed = this_family_jobs.filter(job_taken= False).aggregate(Sum('job_price'))
     
     
     template = loader.get_template('jobs/index.html')
@@ -119,7 +137,7 @@ def mark_done(request):
     if int(pk) > 0:
         upd_rec = JobPost.objects.get(pk=pk)
         upd_rec.job_done = True
-        upd_rec.job_done_date = datetime.datetime.now()
+        upd_rec.job_done_date = timezone.now()
         upd_rec.save()  
     elif int(pk) < 0:
         pkid = str(-1*int(pk))
@@ -142,6 +160,7 @@ def mark_done(request):
                 print(job)
                 job.job_taken = False
                 job.job_done = False
+                job.job_done_date = None
                 job.job_taker = User.objects.get(username = 'nouser')
                 job.save()
         except Exception as e:

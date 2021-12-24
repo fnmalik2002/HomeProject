@@ -14,7 +14,8 @@ class JobPost(models.Model):
     job_taken = models.BooleanField(default=False)
     job_done = models.BooleanField(default=False)
     job_done_date = models.DateTimeField('date job completed', null=True, blank=True)
-    job_taker = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    job_taker = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='job_user')
+    job_creator = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='job_author')
     def __str__(self):
         return self.job_title
     
