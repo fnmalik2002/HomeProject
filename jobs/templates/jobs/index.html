@@ -4,40 +4,40 @@
     <h4 class="mt-4 mb-4 pt-3">Jobs Available</h4>
 
 
-    <div class="row">
+    <div class="row justify-content-start flex-wrap">
 
         {% if job_list %} {% for q in job_list %}
-        <div class="card ms-3 mb-3 shadow bg-body rounded" style="width: 16rem;">
-            <!-- <a class="btn text-start" href="{% url 'jobs:detail' q.id%}"> -->
-            <div class="card-body">
+        <div class="card ms-4 mb-3 shadow bg-body rounded p-0" style="width: 14rem;">
+            <a class="btn p-0" href="{% url 'jobs:detail' q.id%}" style="width: 100%;">
 
-                <small class="card-text text-dark">{{q.publish_date}}</small>
-                <div class="d-flex">
-                    <h3 class="card-title py-2 pr-4 ">{{ q.job_title }}</h3>
-                    <h2 class="text-danger ps-5 py-2">${{q.job_price}}</h2>
+                <div class="card-body p-0">
 
 
-                </div>
-                <p class="text-dark">{{q.job_detail}}</p>
+                    <div class="d-flex justify-content-between">
+                        <small class="card-text text-black-50 mt-1 ms-1">{{q.publish_date.date}}</small>
+                        <h3 class="text-danger mt-1 me-1 "><small>$</small>{{q.job_price}}</h3>
+                    </div>
+                    <h4 class="card-title pb-3 text-center">{{ q.job_title }}</h4>
+                    <!-- <p class="text-dark">{{q.job_detail}}</p> -->
 
-                <!-- </a> -->
-                <form class="text-center" action="{% url 'jobs:payments' %}" method='post'>
-                    {% csrf_token %}
+            </a>
+            <form class="text-center bg-info rounded-bottom" action="{% url 'jobs:payments' %}" method='post'>
+                {% csrf_token %}
 
-                    <input type="radio" id="accept" name="Choice" value="{{q.id}}" checked style="display: none;">
-                    <label for="accept" style="display: none;"> Accept</label>
-                    <!-- <input type="radio" id="reject" name="Choice" value="-2">
+                <input type="radio" id="accept" name="Choice" value="{{q.id}}" checked style="display: none;">
+                <label for="accept" style="display: none;"> Accept</label>
+                <!-- <input type="radio" id="reject" name="Choice" value="-2">
                 <label for="reject"> Reject</label> -->
-                    <input type="submit" value="Accept" class="btn btn-info">
-                </form>
+                <input type="submit" value="Accept" class="btn btn-info text-white fs-5" style="width: 100%;">
+            </form>
             </div>
         </div>
         {% endfor %} {% else %}
 
-        <div class="card ms-3 mb-3 shadow bg-body rounded" style="width: 16rem;">
+        <div class="card ms-4 mb-3 shadow bg-body rounded p-0" style="width: 14rem;">
 
-            <div class="card-body">
-                <p class="card-title">No data available.</p>
+            <div class="card-body mt-2 pb-0">
+                <p class="card-title pb-3 text-center">No jobs available</p>
             </div>
         </div>
         {% endif %}
@@ -49,37 +49,39 @@
     <h4 class="mt-4 mb-4 pt-3">Jobs you accepted </h4>
     <div class="row">
         {% if my_unfinished_jobs %} {% for q in my_unfinished_jobs %}
-        <div class="card ms-3 mb-3 shadow bg-body rounded" style="width: 16rem; background-color:rgb(229, 255, 182)">
+        <div class="card ms-4 mb-3 shadow bg-body rounded p-0" style="width: 14rem;">
+            <a class="btn p-0" href="{% url 'jobs:detail' q.id%}" style="width: 100%;">
+                <div class="card-body p-0 ">
+                    <div class="d-flex justify-content-between">
+                        <small class="card-text text-black-50 mt-1 ms-1">{{q.publish_date.date}}</small>
+                        <h3 class="text-danger mt-1 me-1 "><small>$</small>{{q.job_price}}</h3>
+                    </div>
 
-            <div class="card-body">
-                <small class="card-text text-dark">{{q.publish_date}}</small>
-                <div class="d-flex">
-                    <h3 class="card-title py-2 pr-4 ">{{ q.job_title }}</h3>
-                    <h2 class="text-danger ps-5 py-2">${{q.job_price}}</h2>
-                </div>
-                <p class="text-dark">{{q.job_detail}}</p>
+                    <h4 class="card-title pb-3 text-center">{{ q.job_title }}</h4>
 
-                <div class="d-flex d-flex-row justify-content-center">
-                    <form id="1" class="m-1" action="{% url 'jobs:mark_done' %}" method='post'>
-                        {% csrf_token %}
-
-
-                        <input type="radio" id="accept" name="Choice" value={{q.id}} checked style="display: none;">
-                        <label for="accept" style="display: none;"> Mark Done</label>
-
-                        <input type="submit" value=" Done " class="btn" style="background-color:lightgreen;">
-                    </form>
-                    <form id="2" class="m-1" action="{% url 'jobs:mark_not_done' %}" method='post'>
-                        {% csrf_token %}
-                        <input type="radio" id="accept2" name="Choice" value=-{{q.id}} checked style="display: none;">
-                        <label for="accept2" style="display: none;"> Return Job</label>
+                    <!-- <p class="text-dark">{{q.job_detail}}</p> -->
+            </a>
+            <div class="d-flex d-flex-row justify-content-start p-0">
+                <form id="1" class="px-3 mt-1" action="{% url 'jobs:mark_done' %}" method='post' style="background-color:gray; width: 50%;">
+                    {% csrf_token %}
 
 
-                        <input type="submit" value="Return" class="btn" style="background-color:coral;">
-                    </form>
+                    <input type="radio" id="accept" name="Choice" value={{q.id}} checked style="display: none;">
+                    <label for="accept" style="display: none;"> Mark Done</label>
 
-                    <!-- <a class="btn bg-info" role="button" href="{% url 'jobs:payments' %}">Action</a> -->
-                </div>
+                    <input type="submit" value=" Done " class="btn text-white" style="background-color:gray;">
+                </form>
+                <form id="2" class="px-3 mt-1" action="{% url 'jobs:mark_not_done' %}" method='post' style="background-color:darkgray; width: 50%;">
+                    {% csrf_token %}
+                    <input type="radio" id="accept2" name="Choice" value=-{{q.id}} checked style="display: none;">
+                    <label for="accept2" style="display: none;"> Return Job</label>
+
+
+                    <input type="submit" value="Return" class="btn text-white" style="background-color:darkgray;">
+                </form>
+
+                <!-- <a class="btn bg-info" role="button" href="{% url 'jobs:payments' %}">Action</a> -->
+            </div>
             </div>
 
         </div>
@@ -87,9 +89,9 @@
 
 
         {% endfor %} {% else %}
-        <div class="card ms-3 mb-3 shadow bg-body rounded" style="width: 16rem;">
-            <div class="card-body">
-                <p class="card-title">No data available.</p>
+        <div class="card ms-3 mb-3 shadow bg-body rounded" style="width: 14rem;">
+            <div class="card-body mt-2 pb-0">
+                <p class="card-title pb-3 text-center">Nothing here</p>
             </div>
         </div>
         {% endif %}
@@ -100,24 +102,27 @@
     <h4 class="mt-4 mb-4 pt-3"> Jobs you finished </h4>
     <div class="row">
         {% if my_done_jobs %} {% for q in my_done_jobs %}
-        <div class="card ms-3 mb-3 shadow bg-body rounded" style="width: 16rem;  background-color:rgb(201, 202, 199)">
-            <div class="card-body">
-                <p>Date Finished </p>
-                <small class="card-text text-dark">{{q.job_done_date}}</small>
+        <div class="card ms-4 mb-3 shadow bg-body rounded p-0" style="width: 14rem;">
+            <a class="btn p-0" href="{% url 'jobs:detail' q.id%}" style="width: 100%;">
+                <div class="card-body p-0 ">
+                    <div class="d-flex justify-content-between">
+                        <small class="card-text text-black-50 mt-1 ms-1">{{q.job_done_date.date}}</small>
+                        <h3 class="text-danger mt-1 me-1 "><small>$</small>{{q.job_price}}</h3>
+                    </div>
 
-                <h3 class="card-title">{{ q.job_title }}</h3>
-                <div class="card-text">
-                    <small class="card-text text-dark">{{q.publish_date}}</small>
-                    <p class="text-dark"> {{q.job_detail}}</p>
-                    <h2 class="text-danger"> ${{q.job_price}}</h2>
+                    <h4 class="card-title pb-3 text-center">{{ q.job_title }}</h4>
+
+
+
+
                 </div>
-            </div>
+                <a class="btn p-0" href="{% url 'jobs:detail' q.id%}" style="width: 100%;"></a>
         </div>
 
         {% endfor %} {% else %}
-        <div class="card ms-3 mb-3 shadow bg-body rounded " style="width: 16rem;">
-            <div class="card-body">
-                <p class="card-title">No data available.</p>
+        <div class="card ms-3 mb-3 shadow bg-body rounded " style="width: 14rem;">
+            <div class="card-body mt-2 pb-0">
+                <p class="card-title pb-3 text-center">Nothing here</p>
             </div>
         </div>
         {% endif %}
@@ -128,7 +133,9 @@
 
 <div class="d-flex flex-column " style="position: fixed; right: 0; bottom: 0;">
     <div class=" mt-4 text-center">
-        {% if user.first_name == "Faizan" %}
+
+        {% if user.is_superuser %}
+
         <div class="" style="width: 160px;">
 
             <div class="">
@@ -143,7 +150,7 @@
 
             </div>
         </div>
-        {% endif%}
+        {% endif %}
 
         <div class="d-flex flex-column ">
             <div class=" mt-4 text-center">
