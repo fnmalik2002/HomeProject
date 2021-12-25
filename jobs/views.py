@@ -10,6 +10,11 @@ from django.contrib.auth.models import User, Group
 from django.utils import timezone
 from django.db.models import Avg, Count, Min, Sum
 
+
+my_money_under_review_this_month = None
+my_total_this_mont = None
+unclaimed = None
+
 # Create your views here.
 @login_required
 def index(request):
@@ -101,7 +106,11 @@ def detail(request, pk):
         usr = request.user
     context = {
     'detail': detail,
-    'user': usr, }
+    'user': usr,
+    # 'my_money_under_review_this_month': my_money_under_review_this_month,
+    # 'unclaimed': unclaimed,
+    # 'my_total_this_mont': my_total_this_mont,
+     }
     return HttpResponse(template.render(context, request))
 
 def payments(request):

@@ -13,22 +13,27 @@
 </head>
 
 <body>
+    <!-- <div class="container-fluid"> -->
+    <!-- <div class="row">
+            <div class="col-12"> -->
 
-    <nav class="navbar navbar-expand-xl  navbar-light text-light ">
-        <div class="container-fluid shadow">
-            <div class="d-flex flex-row align-items-start shadow">
-                <a href="../">
-                    <div class="text-center" style="width:80px; height:80px; border-radius: 50%; background-color:lightslategrey;">
-                        <img src="{%static 'jobs/logo.png'%}" width="70px" height="70px" class="" alt="image">
-                    </div>
-                </a>
-                <div class="m-3 d-flex flex-column align-items-bottom ">
-                    <small class="m-0 text-black-50"> Welcome! </small>
-                    <p class="m-0 text-success">{% block user %} {% endblock user %}
-                        <span>
+    <nav class="navbar navbar-expand-xl pt-0 navbar-light text-light ">
+        <div class="container-fluid ">
+            <div class="shadow text-align-center p-2" style="height:116px; width:100%; ">
+                <div class="m-2  d-flex flex-row align-items-start">
+                    <a href="../">
+                        <div class="text-center" style="width:80px; height:80px; border-radius: 50%; background-color:lightslategrey;">
+                            <img src="{%static 'jobs/logo.png'%}" width="70px" height="70px" class="" alt="image">
+                        </div>
+                    </a>
+                    <div class="m-3 d-flex flex-column align-items-bottom ">
+                        <small class="m-0 text-black-50"> Welcome! </small>
+                        <p class="m-0 text-success">{% block user %} {% endblock user %}
+                            <span>
                     <small class="m-0 "><a class="text-decoration-none text-muted" href="/accounts/logout/"><strong>/</strong> <i>Logout</i></a></small>
                   </span>
-                    </p>
+                        </p>
+                    </div>
                 </div>
             </div>
 
@@ -46,12 +51,15 @@
             </div>
         </div>
     </nav>
+    <!-- 
+            </div>
+        </div> -->
+    <!-- </div> -->
+    <div class="container-fluid">
 
-    <div class="container-fluid ">
-        {% block detail %} {% endblock detail %}
         <div class="row">
             <div class="col-12">
-                {% block content %} {% endblock content %}
+                {% block detail %} {% endblock detail %} {% block content %} {% endblock content %}
             </div>
 
 

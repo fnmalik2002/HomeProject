@@ -1,7 +1,5 @@
-{% extends "jobs/base.html" %} {% block user %}
-{{user.first_name}} {{user.last_name}} {% endblock user %} {% block detail %}
-
-<div class="container">
+{% extends "jobs/base.html" %} {% block user %} {{user.first_name}} {{user.last_name}} {% endblock user %} {% block detail %} {% load static %}
+<div class="container-fluid">
 
     {% if detail %}
     <div class="row justify-content-center">
@@ -61,4 +59,87 @@
 
     {% endif %}
 </div>
-{% endblock detail %}
+{% endblock detail %} {% block sidebar %}
+
+<div class="d-flex flex-row " style="">
+    <div class="d-flex flex-row ">
+
+        {% if user.is_staff %}
+        <div class=" mt-2 mb-2 text-center align-content-center shadow">
+            <a class="btn p-0" href="./admin/" style="width: 100%;">
+                <div class="" style="width: 150px;">
+                    <img class="m-2" src="{% static 'jobs/admin.png'%}" style="width: 36px; height: 36px;" alt="Card image">
+                    <div class="">
+                        <p class="m-0 text-black-50 fs-6">Admin Access</p>
+                        <form id="3" class="m-0 p-0" action="{% url 'jobs:mark_not_done' %}" method='post'>
+                            {% csrf_token %}
+                            <input type="radio" id="accept2" name="Choice" value=0 checked style="display: none;">
+                            <label for="accept2" style="display: none;"> Reset Jobs</label>
+                            <input type="submit" value="Reset Jobs" class="btn text-black-50 m-0 p-0" style="">
+                        </form>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        {% endif %}
+
+
+        <div class=" mt-2 mb-2  text-center shadow">
+            <div class="" style="width: 150px;">
+                <img class="m-2" src="{% static 'jobs/unclaimed.png'%}" style="width: 36px; height: 36px;" alt="Card image">
+                <div class="">
+                    <p class="m-0 text-black-50 fs-6">Grab More</p> {% if unclaimed.job_price__sum != None %}
+                    <p class="text-black-50 fs-6">${{unclaimed.job_price__sum}}</p>
+                    {% else %}
+                    <p class="text-black-50 fs-6">$0</p>
+                    {% endif %}
+
+
+                </div>
+            </div>
+
+
+        </div>
+
+        <div class=" mt-2 mb-2  text-center shadow">
+            <div class="" style="width: 150px;">
+                <img class="m-2" src="{% static 'jobs/underreview.png'%}" style="width: 36px; height: 36px;" alt="Card image">
+                <div class="">
+                    <p class="m-0 text-black-50">Under Review</p> {% if my_money_under_review_this_month.job_price__sum != None %}
+                    <p class="text-black-50 fs-6">${{my_money_under_review_this_month.job_price__sum}}</p>
+                    {% else %}
+                    <p class="text-black-50 fs-6">$0</p>
+                    {% endif %}
+
+                </div>
+            </div>
+
+
+        </div>
+
+
+        <div class=" mt-2 mb-2  text-center shadow">
+            <div class="" style="width: 150px;">
+                <img class="m-2" src="{% static 'jobs/mymoney.png'%}" style="width: 36px; height: 36px;" alt="Card image">
+                <div class="">
+                    <p class="m-0 text-black-50">Your Money</p> {% if my_total_this_mont.job_price__sum != None %}
+                    <p class="text-black-50 fs-6">${{my_total_this_mont.job_price__sum}}</p>
+                    {% else %}
+                    <p class="text-black-50 fs-6">$0</p>
+                    {% endif %}
+
+
+                </div>
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+<div> {% endblock sidebar %}
