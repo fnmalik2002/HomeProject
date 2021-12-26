@@ -46,7 +46,13 @@ def index(request):
 
     print('this_family_jobs : ', this_family_jobs)
     
-    if request.user.is_superuser:
+    if request.user.is_staff:
+        print("I am a staff")
+        my_jobs_under_review = this_family_jobs.filter(job_taker=user).filter(job_taken= True).filter(job_under_review= True).order_by('-id')[:10] 
+        my_jobs_acceptably_done = this_family_jobs.filter(job_taker=user).filter(job_taken=True).filter(job_done=True).filter(job_passed_review= True).order_by('-id')[:10]
+        
+        jobs_under_review = this_family_jobs.filter(job_taken= True).filter(job_under_review= True).order_by('-id')[:10] 
+        jobs_acceptably_done = this_family_jobs.filter(job_taken=True).filter(job_done=True).filter(job_passed_review= True).order_by('-id')[:10]
         
         job_list = this_family_jobs.filter(job_taken= False).order_by('-id')[:10] 
         job_gone = this_family_jobs.filter(job_taken= True).order_by('-id')[:10]
@@ -55,11 +61,17 @@ def index(request):
 
         my_done_jobs = this_family_jobs.filter(job_taker=user).filter(job_done=True).order_by('-id')[:10]
         all_done_jobs = this_family_jobs.filter(job_taken=True).filter(job_done=True).order_by('-id')[:10]
-        my_money_under_review_this_month = this_family_jobs.filter(job_taker=user).filter(job_taken=True).filter(job_done=False).aggregate(Sum('job_price'))
-        my_total_this_mont = this_family_jobs.filter(job_taker=user).filter(job_taken=True).filter(job_done=True).aggregate(Sum('job_price'))
+        my_money_under_review_this_month = this_family_jobs.filter(job_taken=True).filter(job_done=False).aggregate(Sum('job_price'))
+        my_total_this_mont = this_family_jobs.filter(job_taken=True).filter(job_done=True).aggregate(Sum('job_price'))
         unclaimed = this_family_jobs.filter(job_taken= False).aggregate(Sum('job_price'))
 
     else:
+        print("I am not a staff")
+        my_jobs_under_review = this_family_jobs.filter(job_taker=user).filter(job_taken= True).filter(job_under_review= True).order_by('-id')[:10] 
+        my_jobs_acceptably_done = this_family_jobs.filter(job_taker=user).filter(job_taken=True).filter(job_done=True).filter(job_passed_review= True).order_by('-id')[:10]
+        jobs_under_review = this_family_jobs.filter(job_taken= True).filter(job_under_review= True).order_by('-id')[:10] 
+        jobs_acceptably_done = this_family_jobs.filter(job_taken=True).filter(job_done=True).filter(job_passed_review= True).order_by('-id')[:10]
+        
 
         job_list = this_family_jobs.filter(job_taken= False).order_by('-id')[:10]  
         job_gone = this_family_jobs.filter(job_taken= True).order_by('-id')[:10]
@@ -91,6 +103,11 @@ def index(request):
      'unclaimed': unclaimed,
      'all_unfinished_jobs' : all_unfinished_jobs,
      'all_done_jobs' : all_done_jobs,
+     'jobs_acceptably_done' : jobs_acceptably_done,
+     'jobs_under_review' : jobs_under_review,
+     'my_jobs_acceptably_done' : my_jobs_acceptably_done,
+     'my_jobs_under_review' : my_jobs_under_review,
+
      }
     return HttpResponse(template.render(context, request))
 
@@ -129,6 +146,7 @@ def payments(request):
         print("choice id : ", pk)
         upd_rec = JobPost.objects.get(pk=pk)
         upd_rec.job_taken = True
+        upd_rec.job_taken_date = timezone.now()
         upd_rec.job_taker = user
         upd_rec.save()
     except Exception as e:
@@ -154,6 +172,21 @@ def reset_password(request):
      }
     return HttpResponse(template.render(context, request))
 
+def review_done(request):
+    pk=request.POST['Choice']
+    print("choice id : ", pk)
+    print(type(pk))
+    if int(pk) > 0:
+        upd_rec = JobPost.objects.get(pk=pk)
+        upd_rec.job_under_review = False
+        upd_rec.job_passed_review = True
+        
+        upd_rec.save()
+    else:
+        pass
+
+    return index(request) 
+
 def mark_done(request):
     pk=request.POST['Choice']
     print("choice id : ", pk)
@@ -161,6 +194,7 @@ def mark_done(request):
     if int(pk) > 0:
         upd_rec = JobPost.objects.get(pk=pk)
         upd_rec.job_done = True
+        upd_rec.job_under_review = True
         upd_rec.job_done_date = timezone.now()
         upd_rec.save()  
     elif int(pk) < 0:
@@ -185,6 +219,8 @@ def mark_done(request):
                 job.job_taken = False
                 job.job_done = False
                 job.job_done_date = None
+                job.job_taken_date = None
+                job.job_under_review = False
                 job.job_taker = User.objects.get(username = 'nouser')
                 job.save()
         except Exception as e:
