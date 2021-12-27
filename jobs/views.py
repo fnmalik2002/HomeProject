@@ -61,8 +61,8 @@ def index(request):
 
         my_done_jobs = this_family_jobs.filter(job_taker=user).filter(job_done=True).order_by('-id')[:10]
         all_done_jobs = this_family_jobs.filter(job_taken=True).filter(job_done=True).order_by('-id')[:10]
-        my_money_under_review_this_month = this_family_jobs.filter(job_taken=True).filter(job_done=False).aggregate(Sum('job_price'))
-        my_total_this_mont = this_family_jobs.filter(job_taken=True).filter(job_done=True).aggregate(Sum('job_price'))
+        my_money_under_review_this_month = this_family_jobs.filter(job_taken=True).filter(job_under_review= True).filter(job_done=True).aggregate(Sum('job_price'))
+        my_total_this_mont = this_family_jobs.filter(job_taken=True).filter(job_done=True).filter(job_passed_review= True).aggregate(Sum('job_price'))
         unclaimed = this_family_jobs.filter(job_taken= False).aggregate(Sum('job_price'))
 
     else:
@@ -80,8 +80,8 @@ def index(request):
         my_done_jobs = this_family_jobs.filter(job_taker=user).filter(job_done=True).order_by('-id')[:10]
         all_done_jobs = this_family_jobs.filter(job_taken=True).filter(job_done=True).order_by('-id')[:10]
         
-        my_money_under_review_this_month = this_family_jobs.filter(job_taker=user).filter(job_taken=True).filter(job_done=False).aggregate(Sum('job_price'))
-        my_total_this_mont = this_family_jobs.filter(job_taker=user).filter(job_taken=True).filter(job_done=True).aggregate(Sum('job_price'))
+        my_money_under_review_this_month = this_family_jobs.filter(job_taker=user).filter(job_taken=True).filter(job_under_review= True).filter(job_done=True).aggregate(Sum('job_price'))
+        my_total_this_mont = this_family_jobs.filter(job_taker=user).filter(job_taken=True).filter(job_done=True).filter(job_passed_review= True).aggregate(Sum('job_price'))
         unclaimed = this_family_jobs.filter(job_taken= False).aggregate(Sum('job_price'))
     
     
@@ -221,6 +221,7 @@ def mark_done(request):
                 job.job_done_date = None
                 job.job_taken_date = None
                 job.job_under_review = False
+                job.job_passed_review = False
                 job.job_taker = User.objects.get(username = 'nouser')
                 job.save()
         except Exception as e:
