@@ -1,9 +1,13 @@
-{% extends "jobs/base.html" %}
-{% block user %}
-{{user}}
-    {% endblock user %}
-{% block content %}
-  <h2>Logged Out</h2>
-  <p>Thanks for your visit</p>
-  <a href="{% url 'login'%}">LogIn</a>
+{% extends "jobs/base.html" %} {% block user %} {{user}} {% endblock user %} {% block content %}
+<div class="container">
+    <div class="row text-center align-content-center m-5  ">
+        <div class="col"></div>
+        <div class="col-5 shadow p-3">
+            <h2 class="p-3">Logged Out</h2>
+            <p>Thanks for your visit</p>
+            <a class="btn btn-success" href="{% url 'login'%}">LogIn</a>
+        </div>
+        <div class="col"></div>
+    </div>
+</div>
 {% endblock %}

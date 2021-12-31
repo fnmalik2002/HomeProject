@@ -273,7 +273,7 @@
 {% endblock content %} {% block sidebar %}
 <!-- <div class="col"> -->
 
-<div class="d-flex flex-row " style="">
+<div class="d-flex flex-row ">
     <div class="d-flex flex-row ">
 
         {% if user.is_staff %}
@@ -291,7 +291,7 @@
                             <label for="accept2" style="display: none; "> Reset Jobs</label>
 
 
-                            <input type="submit" value="Reset Jobs" class="btn text-success m-0 p-0" style="">
+                            <input type="submit" value="Reset Jobs" class="btn text-success m-0 p-0">
                         </form>
 
 
@@ -302,6 +302,24 @@
         </div>
 
         {% endif %}
+        <div class=" mt-2 mb-2  text-center border-start shadow-sm">
+            <a class="btn p-0" style="width: 100%;" href="{% url 'jobs:dashboard' %}">
+                <div class="" style="width: 150px;">
+                    <img class="m-2" src="{% static 'jobs/dashboard.png' %}" style="width: 36px; height: 36px;" alt="Card image">
+                    <div class="">
+                        <p class="m-0 text-black-50 fs-6">My Dashboard</p>
+                        <p class="text-black-50 fs-6">
+
+                        </p>
+
+
+
+                    </div>
+                </div>
+            </a>
+
+
+        </div>
 
 
         <div class=" mt-2 mb-2  text-center border-start shadow-sm">
@@ -325,8 +343,11 @@
             <div class="" style="width: 150px;">
                 <img class="m-2" src="{% static 'jobs/underreview.png'%}" style="width: 36px; height: 36px;" alt="Card image">
                 <div class="">
+
                     <p class="m-0 text-black-50">Under Review</p> {% if my_money_under_review_this_month.job_price__sum != None %}
                     <p class="text-black-50 fs-6">${{my_money_under_review_this_month.job_price__sum}}</p>
+
+
                     {% else %}
                     <p class="text-black-50 fs-6">$0</p>
                     {% endif %}
@@ -342,7 +363,11 @@
             <div class="" style="width: 150px;">
                 <img class="m-2" src="{% static 'jobs/mymoney.png'%}" style="width: 36px; height: 36px;" alt="Card image">
                 <div class="">
-                    <p class="m-0 text-black-50">Your Money</p> {% if my_total_this_mont.job_price__sum != None %}
+                    {% if user.is_staff %}
+                    <p class="m-0 text-black-50">Clear To Pay</p>
+                    {% else %}
+                    <p class="m-0 text-black-50">Your Money</p>
+                    {% endif %} {% if my_total_this_mont.job_price__sum != None %}
                     <p class="text-black-50 fs-6">${{my_total_this_mont.job_price__sum}}</p>
                     {% else %}
                     <p class="text-black-50 fs-6">$0</p>
@@ -359,6 +384,6 @@
     </div>
     <!-- </div> -->
 
+</div>
 
-
-    {% endblock sidebar %}
+{% endblock sidebar %}
