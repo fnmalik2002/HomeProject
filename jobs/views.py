@@ -305,3 +305,22 @@ def new_job(request):
         'date_today' : date_today,
      }
     return HttpResponse(template.render(context, request))
+
+def repost_job(request, pk):
+    print("JOB IS : ")
+    this_job = JobPost.objects.get(id=pk)
+    print("JOB IS : ", this_job.job_title, this_job.job_detail,this_job.job_price )
+
+    reposted_job = JobPost(job_title = this_job.job_title, job_detail=this_job.job_detail, job_price=this_job.job_price, job_creator=request.user )
+    reposted_job.save()
+
+    
+    date_today = timezone.datetime.now()
+    print("New Job repost page loaded")
+    template = loader.get_template('jobs/dashboard.html')
+    context = {
+        
+        'date_today' : date_today,
+     }
+    return HttpResponse(template.render(context, request))
+

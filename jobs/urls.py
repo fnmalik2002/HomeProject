@@ -12,4 +12,5 @@ urlpatterns = [
     path('mark_not_done/', views.mark_done, name='mark_not_done'),
     path('dashboard/', views.dashboard, name='dashboard'),
     path('new_job/', views.new_job, name='new_job'),
+    path('<int:pk>/repost_job/', views.repost_job, name='repost_job'),
 ]

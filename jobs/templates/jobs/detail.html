@@ -48,6 +48,8 @@
 
                     </div>
                 </a>
+                {% if request.user.is_staff %}
+                <a class="btn p-2 btn-success" href="{% url 'jobs:repost_job' detail.id%}" style="width: 100%;">Re-Post</a> {% endif %}
             </div>
         </div>
     </div>
