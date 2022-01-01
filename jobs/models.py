@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 
 class JobPost(models.Model):
     job_title = models.CharField(max_length=200)
-    publish_date = models.DateTimeField('date published')
+    publish_date = models.DateTimeField('date published', auto_now_add=True)
     job_detail = models.CharField(max_length=200)
     job_price = models.IntegerField(default=0)
     job_taken = models.BooleanField(default=False)

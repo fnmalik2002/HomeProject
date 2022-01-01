@@ -19,7 +19,10 @@
             <h3 class="text-success">Login</h3>
             <div class="card-body text-center">
                 <form method="post">
-                    {% csrf_token %} {{ form.as_p }}
+                    {% csrf_token %}
+
+                    <p> User Name {{ form.username}}</p>
+                    <p> Password&nbsp;&nbsp; {{ form.password}}</p>
                     <input type="submit" value="Login" class="p-2 btn-success rounded w-100">
                 </form>
             </div>

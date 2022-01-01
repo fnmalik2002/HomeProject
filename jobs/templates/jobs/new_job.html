@@ -1,0 +1,101 @@
+{% extends "jobs/base.html" %} {% load static %}{% block user %} {{user.first_name}} {{user.last_name}} {% endblock user %} {% block detail %}
+
+
+
+<div class="row mt-5">
+    <div class="col"></div>
+    <div class="col-4 ">
+        <form method="POST" class="post-form">
+            {% csrf_token %}
+            <div class="card shadow pb-3">
+                <div class="card-title bg-light p-2">
+                    <h4>New Job</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+
+                        <div class="col">
+
+                            <p class="p-0 m-0"><pre>Date created:   {{date_today}}</pre></p>
+                            <p class="p-0 m-0"><pre>Job title :     {{form.job_title}}</pre></p>
+                            <p class="p-0 m-0"><pre>Job detail :    {{form.job_detail}}</pre></p>
+                            <p class="p-0 m-0"><pre>Job price ($):  {{form.job_price}}</pre></p>
+
+
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="text-center ">
+
+                    <button type="submit" class="save btn btn-success w-75">Save</button>
+        </form>
+        </div>
+
+
+        </div>
+
+
+    </div>
+    <div class="col"></div>
+</div>
+
+
+
+{% endblock detail %} {% block sidebar %}
+
+<div class="d-flex flex-row ">
+    <div class="d-flex flex-row ">
+
+        {% if user.is_staff %}
+        <div class=" mt-2 mb-2 text-center align-content-center border-start shadow-sm">
+            <a class="btn p-0" href="../admin/" style="width: 100%;">
+                <div class="" style="width: 150px;">
+                    <img class="m-2" src="{% static 'jobs/admin.png'%}" style="width: 36px; height: 36px;" alt="Card image">
+                    <div class="">
+                        <p class="m-0 text-black-50 fs-6">Admin Access</p>
+                        <form id="3" class="m-0 p-0" action="{% url 'jobs:mark_not_done' %}" method='post'>
+                            {% csrf_token %}
+                            <input type="radio" id="accept2" name="Choice" value=0 checked style="display: none;">
+                            <label for="accept2" style="display: none;"> Reset Jobs</label>
+                            <input type="submit" value="Reset Jobs" class="btn text-black-50 m-0 p-0" style="">
+                        </form>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+
+        <div class=" mt-2 mb-2  text-center border-start shadow-sm">
+            <a class="btn p-0" style="width: 100%;" href="{% url 'jobs:new_job' %}">
+                <div class="" style="width: 150px;">
+                    <img class="m-2" src="{% static 'jobs/new_job.png' %}" style="width: 36px; height: 36px;" alt="Card image">
+                    <div class="">
+                        <p class="m-0 text-black-50 fs-6">New Jobs</p>
+                        <i class="btn text-black-50 fs-6">&nbsp;</i>
+                    </div>
+                </div>
+            </a>
+
+
+        </div>
+        {% endif %}
+        <div class=" mt-2 mb-2  text-center border-start shadow-sm">
+            <a class="btn p-0" style="width: 100%;" href="{% url 'jobs:dashboard' %}">
+                <div class="" style="width: 150px;">
+                    <img class="m-2" src="{% static 'jobs/dashboard.png' %}" style="width: 36px; height: 36px;" alt="Card image">
+                    <div class="">
+                        <p class="m-0 text-black-50 fs-6">My Dashboard</p>
+                        <i class="btn text-black-50 fs-6">&nbsp;</i>
+                    </div>
+                </div>
+            </a>
+
+
+        </div>
+
+    </div>
+</div>
+
+{% endblock sidebar %}

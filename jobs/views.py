@@ -13,85 +13,24 @@ from django.db.models import Avg, Count, Min, Sum
 import matplotlib.pyplot as plt
 from io import StringIO
 import numpy as np
+from .forms import NewJob
+from django.shortcuts import redirect
 
 
 my_money_under_review_this_month = None
 my_total_this_mont = None
 unclaimed = None
 
-def get_data(request):
-    print("user type : ",type(request.user))
-    user = User.objects.get(username = request.user)
+def get_this_family_jobs(request):
+    family_admin = None
+    date_today = timezone.datetime.now()
     user_group = Group.objects.get(user = request.user)
-    print('user_group \n', user_group)
-    
     users_in_a_group = User.objects.filter(groups=user_group)
-    print('users in group \n',users_in_a_group )
-    def job_creators(users_in_a_group):
-        poster = None
-        for u in users_in_a_group:
-            job_list_1 = JobPost.objects.filter(job_creator = u).order_by('-id')[:10] 
-            print (u, job_list_1, len(job_list_1))
-            if len(job_list_1) > 0:
-                print("job creator is", u.id)
-                poster = u
-                print(u)
-                
-            else:
-                print('None')
-
-        return poster
-    date_today = timezone.datetime.now()            
-    # print('current month :' , timezone.datetime.now().month)
-    # print("Jobs on a specific date : ", JobPost.objects.filter(publish_date__month=date_today.month))
-    this_family_jobs = JobPost.objects.filter(publish_date__month=date_today.month).filter(job_creator=job_creators(users_in_a_group))
-
-    print('this_family_jobs : ', this_family_jobs)
-    
-    if request.user.is_staff:
-        print("I am a staff")
-        my_jobs_under_review = this_family_jobs.filter(job_taker=user).filter(job_taken= True).filter(job_under_review= True).order_by('-id')[:10] 
-        my_jobs_acceptably_done = this_family_jobs.filter(job_taker=user).filter(job_taken=True).filter(job_done=True).filter(job_passed_review= True).order_by('-id')[:10]
-        
-        jobs_under_review = this_family_jobs.filter(job_taken= True).filter(job_under_review= True).order_by('-id')[:10] 
-        jobs_acceptably_done = this_family_jobs.filter(job_taken=True).filter(job_done=True).filter(job_passed_review= True).order_by('-id')[:10]
-        
-        job_list = this_family_jobs.filter(job_taken= False).order_by('-id')[:10] 
-        
-        job_gone = this_family_jobs.filter(job_taken= True).order_by('-id')[:10]
-        my_unfinished_jobs = this_family_jobs.filter(job_taker=user).filter(job_taken=True).filter(job_done=False).order_by('-id')[:10]
-        all_unfinished_jobs = this_family_jobs.filter(job_taken=True).filter(job_done=False).order_by('-id')[:10]
-
-        my_done_jobs = this_family_jobs.filter(job_taker=user).filter(job_done=True).order_by('-id')[:10]
-        all_done_jobs = this_family_jobs.filter(job_taken=True).filter(job_done=True).order_by('-id')[:10]
-        my_money_under_review_this_month = this_family_jobs.filter(job_taken=True).filter(job_under_review= True).filter(job_done=True).aggregate(Sum('job_price'))
-        my_total_this_mont = this_family_jobs.filter(job_taken=True).filter(job_done=True).filter(job_passed_review= True).aggregate(Sum('job_price'))
-        unclaimed = this_family_jobs.filter(job_taken= False).aggregate(Sum('job_price'))
-        return my_jobs_under_review, my_jobs_acceptably_done, jobs_under_review, jobs_acceptably_done, job_list, job_gone, my_unfinished_jobs, all_unfinished_jobs, my_done_jobs, all_done_jobs, my_money_under_review_this_month, my_total_this_mont, unclaimed
-
-    else:
-        print("I am not a staff")
-        my_jobs_under_review = this_family_jobs.filter(job_taker=user).filter(job_taken= True).filter(job_under_review= True).order_by('-id')[:10] 
-        my_jobs_acceptably_done = this_family_jobs.filter(job_taker=user).filter(job_taken=True).filter(job_done=True).filter(job_passed_review= True).order_by('-id')[:10]
-        jobs_under_review = this_family_jobs.filter(job_taken= True).filter(job_under_review= True).order_by('-id')[:10] 
-        jobs_acceptably_done = this_family_jobs.filter(job_taken=True).filter(job_done=True).filter(job_passed_review= True).order_by('-id')[:10]
-        
-        
-        job_list = this_family_jobs.filter(job_taken= False).order_by('-id')[:10]  
-        
-        
-        job_gone = this_family_jobs.filter(job_taken= True).order_by('-id')[:10]
-        my_unfinished_jobs = this_family_jobs.filter(job_taker=user).filter(job_taken=True).filter(job_done=False).order_by('-id')[:10]
-        all_unfinished_jobs = this_family_jobs.filter(job_taken=True).filter(job_done=False).order_by('-id')[:10]
-        my_done_jobs = this_family_jobs.filter(job_taker=user).filter(job_done=True).order_by('-id')[:10]
-        all_done_jobs = this_family_jobs.filter(job_taken=True).filter(job_done=True).order_by('-id')[:10]
-        
-        my_money_under_review_this_month = this_family_jobs.filter(job_taker=user).filter(job_taken=True).filter(job_under_review= True).filter(job_done=True).aggregate(Sum('job_price'))
-        my_total_this_mont = this_family_jobs.filter(job_taker=user).filter(job_taken=True).filter(job_done=True).filter(job_passed_review= True).aggregate(Sum('job_price'))
-        unclaimed = this_family_jobs.filter(job_taken= False).aggregate(Sum('job_price'))
-        print(my_jobs_under_review, my_jobs_acceptably_done, jobs_under_review, jobs_acceptably_done, job_list, job_gone, my_unfinished_jobs, all_unfinished_jobs, my_done_jobs, all_done_jobs, my_money_under_review_this_month, my_total_this_mont, unclaimed
-        )
-        return my_jobs_under_review, my_jobs_acceptably_done, jobs_under_review, jobs_acceptably_done, job_list, job_gone, my_unfinished_jobs, all_unfinished_jobs, my_done_jobs, all_done_jobs, {'my_money_under_review_this_month' : my_money_under_review_this_month}, {'my_total_this_mont':my_total_this_mont}, {'unclaimed':unclaimed}
+    for u in users_in_a_group:
+        if u.is_staff:
+            family_admin = u
+    this_family_jobs = JobPost.objects.filter(job_creator=family_admin)
+    return this_family_jobs
 
 
 # Create your views here.
@@ -133,7 +72,7 @@ def index(request):
         jobs_under_review = this_family_jobs.filter(job_taken= True).filter(job_under_review= True).order_by('-id')[:10] 
         jobs_acceptably_done = this_family_jobs.filter(job_taken=True).filter(job_done=True).filter(job_passed_review= True).order_by('-id')[:10]
         
-        job_list = this_family_jobs.filter(job_taken= False).order_by('-id')[:10] 
+        job_list = this_family_jobs.filter(job_taken= False).order_by('-id')
         
         job_gone = this_family_jobs.filter(job_taken= True).order_by('-id')[:10]
         my_unfinished_jobs = this_family_jobs.filter(job_taker=user).filter(job_taken=True).filter(job_done=False).order_by('-id')[:10]
@@ -153,7 +92,7 @@ def index(request):
         jobs_acceptably_done = this_family_jobs.filter(job_taken=True).filter(job_done=True).filter(job_passed_review= True).order_by('-id')[:10]
         
         print (this_family_jobs.filter())
-        job_list = this_family_jobs.filter(job_taken= False).order_by('-id')[:10]  
+        job_list = this_family_jobs.filter(job_taken= False).order_by('-id') 
         # print("publish_date : ", job_list)
         
         job_gone = this_family_jobs.filter(job_taken= True).order_by('-id')[:10]
@@ -309,24 +248,60 @@ def mark_done(request):
         except Exception as e:
             print(e)
             print('exception happened')
-        
-
     return index(request)
+
 def mark_not_done(request):
     print("Not done selected")
     return index(request)
 
 @login_required
 def dashboard(request):
+    date_today = timezone.datetime.now()
+    unclaimed_this_day = get_this_family_jobs(request).filter(publish_date__day=date_today.day).filter(job_taken= False).aggregate(Sum('job_price'))  
+    unclaimed_this_month = get_this_family_jobs(request).filter(publish_date__month=date_today.month).filter(job_taken= False).aggregate(Sum('job_price'))  
+    unclaimed_this_year = get_this_family_jobs(request).filter(publish_date__year=date_today.year).filter(job_taken= False).aggregate(Sum('job_price'))  
+    
+    
+    my_total_this_day = get_this_family_jobs(request).filter(publish_date__day=date_today.day).filter(job_taker=request.user).filter(job_taken=True).filter(job_done=True).filter(job_passed_review= True).aggregate(Sum('job_price'))
+    my_total_this_month = get_this_family_jobs(request).filter(publish_date__month=date_today.month).filter(job_taker=request.user).filter(job_taken=True).filter(job_done=True).filter(job_passed_review= True).aggregate(Sum('job_price'))
+    my_total_this_year = get_this_family_jobs(request).filter(publish_date__year=date_today.year).filter(job_taker=request.user).filter(job_taken=True).filter(job_done=True).filter(job_passed_review= True).aggregate(Sum('job_price'))
 
+    print("today jobs = ", unclaimed_this_day)
 
     template = loader.get_template('jobs/dashboard.html')
     context = { 
     'user': request.user,
-    'data' : get_data(request)
+    'date_today' : date_today,
+    'unclaimed_this_day' : unclaimed_this_day,
+    'unclaimed_this_month' : unclaimed_this_month,
+    'unclaimed_this_year' : unclaimed_this_year,
+    'my_total_this_day' : my_total_this_day,
+    'my_total_this_month' : my_total_this_month,
+    'my_total_this_year' : my_total_this_year,
 
      }
     return HttpResponse(template.render(context, request))
     
+def new_job(request):
+    if request.method == "POST":
+        form = NewJob(request.POST)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.job_creator = request.user
+            # post.publish_date = timezone.now()
+            post.save()
+            print("hello")
+            return detail(request, pk=post.pk)
+    else:
+        form = NewJob()
 
+    # print(form)
     
+    date_today = timezone.datetime.now()
+    print("New Job creation page loaded")
+    template = loader.get_template('jobs/new_job.html')
+    context = {
+        'form': form,
+        'date_today' : date_today,
+     }
+    return HttpResponse(template.render(context, request))

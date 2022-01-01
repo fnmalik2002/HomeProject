@@ -1,17 +1,24 @@
 {% extends "jobs/base.html" %} {% load static %} {% block user %} {{user.first_name}} {{user.last_name}} {% endblock user %} {% block content %}
 <div class="container  p-5 m-5">
     <div class="row">
-
+        <p>{{date_today.date}}</p>
 
         <div class="col">
             <div class="card shadow">
                 <div class="card-header">Today</div>
                 <div class="card-body">
-                    <p>Total money earned : </p>
-                    <p>Total money missed : </p>
+                    {% if my_total_this_day.job_price__sum == None %}
+                    <p>Total money earned : $0</p>
+                    {% else %}
+                    <p>Total money earned : ${{my_total_this_day.job_price__sum}}</p>
+                    {% endif %} {% if unclaimed_this_day.job_price__sum == None %}
+                    <p>Total money missed : $0</p>
+                    {% else %}
+                    <p>Total money missed : ${{unclaimed_this_day.job_price__sum}}</p>
+                    {% endif %}
 
                 </div>
-                <div class="card-footer">Date </div>
+                <div class="card-footer"></div>
             </div>
 
         </div>
@@ -19,15 +26,18 @@
             <div class="card shadow">
                 <div class="card-header">This Month</div>
                 <div class="card-body">
-
-
-
-                    <p>Total money earned : {% for d in data %}{% if d.my_total_this_mont.job_price__sum != None %} ${{d.my_total_this_mont.job_price__sum}}{% endif %} {% endfor %}</p>
-
-                    <p>Total money missed : {% for d in data %}{% if d.unclaimed.job_price__sum != None %} ${{d.unclaimed.job_price__sum}} {% endif %}{% endfor %}</p>
+                    {% if my_total_this_month.job_price__sum == None %}
+                    <p>Total money earned : $0</p>
+                    {% else %}
+                    <p>Total money earned : ${{my_total_this_month.job_price__sum}}</p>
+                    {% endif %} {% if unclaimed_this_month.job_price__sum == None %}
+                    <p>Total money missed : $0</p>
+                    {% else %}
+                    <p>Total money missed : ${{unclaimed_this_month.job_price__sum}}</p>
+                    {% endif %}
 
                 </div>
-                <div class="card-footer">Date </div>
+                <div class="card-footer"></div>
             </div>
 
         </div>
@@ -35,11 +45,17 @@
             <div class="card shadow">
                 <div class="card-header">This Year</div>
                 <div class="card-body">
-                    <p>Total money earned : </p>
-                    <p>Total money missed : </p>
-
+                    {% if my_total_this_year.job_price__sum == None %}
+                    <p>Total money earned : $0</p>
+                    {% else %}
+                    <p>Total money earned : ${{my_total_this_year.job_price__sum}}</p>
+                    {% endif %} {% if unclaimed_this_year.job_price__sum == None %}
+                    <p>Total money missed : $0</p>
+                    {% else %}
+                    <p>Total money missed : ${{unclaimed_this_year.job_price__sum}}</p>
+                    {% endif %}
                 </div>
-                <div class="card-footer">Date </div>
+                <div class="card-footer"></div>
             </div>
 
         </div>
@@ -83,6 +99,20 @@
             </a>
         </div>
 
+
+        <div class=" mt-2 mb-2  text-center border-start shadow-sm">
+            <a class="btn p-0" style="width: 100%;" href="{% url 'jobs:new_job' %}">
+                <div class="" style="width: 150px;">
+                    <img class="m-2" src="{% static 'jobs/new_job.png' %}" style="width: 36px; height: 36px;" alt="Card image">
+                    <div class="">
+                        <p class="m-0 text-black-50 fs-6">New Jobs</p>
+                        <i class="btn text-black-50 fs-6">&nbsp;</i>
+                    </div>
+                </div>
+            </a>
+
+
+        </div>
         {% endif %}
         <div class=" mt-2 mb-2  text-center border-start shadow-sm">
             <a class="btn p-0" style="width: 100%;" href="#">
