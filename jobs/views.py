@@ -128,6 +128,7 @@ def index(request):
      'jobs_under_review' : jobs_under_review,
      'my_jobs_acceptably_done' : my_jobs_acceptably_done,
      'my_jobs_under_review' : my_jobs_under_review,
+     'date_today' : timezone.datetime.now(),
 
      }
     return HttpResponse(template.render(context, request))
@@ -257,6 +258,10 @@ def mark_not_done(request):
 @login_required
 def dashboard(request):
     date_today = timezone.datetime.now()
+
+    job_list = get_this_family_jobs(request)
+    
+
     unclaimed_this_day = get_this_family_jobs(request).filter(publish_date__day=date_today.day).filter(job_taken= False).aggregate(Sum('job_price'))  
     unclaimed_this_month = get_this_family_jobs(request).filter(publish_date__month=date_today.month).filter(job_taken= False).aggregate(Sum('job_price'))  
     unclaimed_this_year = get_this_family_jobs(request).filter(publish_date__year=date_today.year).filter(job_taken= False).aggregate(Sum('job_price'))  
@@ -266,7 +271,26 @@ def dashboard(request):
     my_total_this_month = get_this_family_jobs(request).filter(publish_date__month=date_today.month).filter(job_taker=request.user).filter(job_taken=True).filter(job_done=True).filter(job_passed_review= True).aggregate(Sum('job_price'))
     my_total_this_year = get_this_family_jobs(request).filter(publish_date__year=date_today.year).filter(job_taker=request.user).filter(job_taken=True).filter(job_done=True).filter(job_passed_review= True).aggregate(Sum('job_price'))
 
-    print("today jobs = ", unclaimed_this_day)
+    print("job = ", job_list)
+
+    
+    def get_jobs_ready_for_payment_this_month(request):
+        jobs = {}
+        user_group = Group.objects.get(user = request.user)
+        users_in_a_group = User.objects.filter(groups=user_group)
+        for u in users_in_a_group:
+            if u.is_staff:
+                pass
+            else:
+                jobs[u.first_name] = get_this_family_jobs(request).filter(publish_date__month=date_today.month).filter(job_taker=u).filter(job_taken=True).filter(job_done=True).filter(job_passed_review= True).aggregate(Sum('job_price'))
+            
+        print("Family jobs this month : ", jobs)
+        for key, value in jobs.items():
+            print("JOBS for this family children : ", key, value)
+        return jobs
+
+    get_jobs_ready_for_payment_this_month(request)
+
 
     template = loader.get_template('jobs/dashboard.html')
     context = { 
@@ -278,6 +302,8 @@ def dashboard(request):
     'my_total_this_day' : my_total_this_day,
     'my_total_this_month' : my_total_this_month,
     'my_total_this_year' : my_total_this_year,
+    'job_list' : job_list,
+    'jobs_ready_for_payment_this_month' : get_jobs_ready_for_payment_this_month(request),
 
      }
     return HttpResponse(template.render(context, request))

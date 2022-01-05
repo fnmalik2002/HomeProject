@@ -38,9 +38,9 @@
                         </div>
                     </div>
                     <div class="card-footer bg-gray mt-2 text-dark-50 text-start">
-                        <p><small class="card-text ">Posted On : <strong>{{detail.publish_date}}</strong></small></p>
+                        <p><small class="card-text ">Posted On : <strong>{{detail.publish_date.date}}</strong></small></p>
                         {% if detail.job_done %}
-                        <p><small class="card-text">Finished On : <strong>{{detail.job_done_date}}</strong></small></p>
+                        <p><small class="card-text">Finished On : <strong>{{detail.job_done_date.date}}</strong></small></p>
                         {% else %}
                         <p></p>
                         {% endif %}
