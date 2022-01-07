@@ -72,6 +72,7 @@ def index(request):
         jobs_under_review = this_family_jobs.filter(job_taken= True).filter(job_under_review= True).order_by('-id')[:10] 
         jobs_acceptably_done = this_family_jobs.filter(job_taken=True).filter(job_done=True).filter(job_passed_review= True).order_by('-id')[:10]
         jobs_review_rejected_by_admin = this_family_jobs.filter(job_taken=True).filter(job_done=True).filter(job_rejected_by_admin = True).order_by('-id')[:10]
+        my_jobs_review_rejected_by_admin = this_family_jobs.filter(job_taker=user).filter(job_taken=True).filter(job_done=True).filter(job_rejected_by_admin = True).order_by('-id')[:10]
 
         job_list = this_family_jobs.filter(job_taken= False).order_by('-id')
         
@@ -105,7 +106,9 @@ def index(request):
         my_money_under_review_this_month = this_family_jobs.filter(job_taker=user).filter(job_taken=True).filter(job_under_review= True).filter(job_done=True).aggregate(Sum('job_price'))
         my_total_this_mont = this_family_jobs.filter(job_taker=user).filter(job_taken=True).filter(job_done=True).filter(job_passed_review= True).aggregate(Sum('job_price'))
         unclaimed = this_family_jobs.filter(job_taken= False).aggregate(Sum('job_price'))
-    
+        my_jobs_review_rejected_by_admin = this_family_jobs.filter(job_taker=user).filter(job_taken=True).filter(job_done=True).filter(job_rejected_by_admin = True).order_by('-id')[:10]
+        jobs_review_rejected_by_admin = this_family_jobs.filter(job_taken=True).filter(job_done=True).filter(job_rejected_by_admin = True).order_by('-id')[:10]
+
     
     template = loader.get_template('jobs/index.html')
     print("Money", my_money_under_review_this_month)
@@ -131,6 +134,7 @@ def index(request):
      'my_jobs_under_review' : my_jobs_under_review,
      'date_today' : timezone.datetime.now(),
      'jobs_review_rejected_by_admin' : jobs_review_rejected_by_admin,
+     'my_jobs_review_rejected_by_admin' : my_jobs_review_rejected_by_admin,
 
      }
     return HttpResponse(template.render(context, request))
@@ -295,7 +299,7 @@ def dashboard(request):
             if u.is_staff:
                 pass
             else:
-                jobs[u.first_name] = get_this_family_jobs(request).filter(publish_date__month=date_today.month).filter(job_taker=u).filter(job_taken=True).filter(job_done=True).filter(job_passed_review= True).aggregate(Sum('job_price'))
+                jobs[u] = get_this_family_jobs(request).filter(publish_date__month=date_today.month).filter(job_taker=u).filter(job_taken=True).filter(job_done=True).filter(job_passed_review= True).aggregate(Sum('job_price'))
             
         print("Family jobs this month : ", jobs)
         for key, value in jobs.items():
@@ -361,5 +365,18 @@ def repost_job(request, pk):
         
         'date_today' : date_today,
      }
-    return HttpResponse(template.render(context, request))
+    # return HttpResponse(template.render(context, request))
+    return dashboard(request)
+
+def job_payments(request):
+    print("job_payment is done")
+    date_today = timezone.datetime.now()
+    
+    template = loader.get_template('jobs/dashboard.html')
+    context = {
+        
+        'date_today' : date_today,
+     }
+    # return HttpResponse(template.render(context, request))
+    return dashboard(request)
 

@@ -1,10 +1,10 @@
 {% extends "jobs/base.html" %} {% load static %} {% block user %} {{user.first_name}} {{user.last_name}}{% endblock user %} {% block content %}
-<div class="conatiner bg-dark text-light">
+<div class="conatiner bg-success text-light text-center">
 
-    <h5 class="p-2">Activity for {{date_today.date}}</h5>
+    <h5 class="p-1 m-0"> {{date_today.date}}</h5>
 </div>
 <div class="container bg-light">
-    <h5 class="mt-4 mb-4 pt-3 text-black-50">Jobs Available</h5>
+    <h5 class="mt-4 mb-4 pt-3 text-black-50">Jobs available today</h5>
 
 
     <div class="row justify-content-start flex-wrap">
@@ -50,7 +50,7 @@
 </div>
 {% if user.is_staff %}
 <div class="container bg-light">
-    <h5 class="mt-4 mb-4 pt-3 text-black-50">Jobs Taken</h5>
+    <h5 class="mt-4 mb-4 pt-3 text-black-50">Jobs taken today</h5>
     <div class="row">
         {% if all_unfinished_jobs %} {% for q in all_unfinished_jobs %}
         <div class="card ms-4 mb-3 shadow bg-body rounded p-0" style="width: 12rem;">
@@ -84,7 +84,7 @@
 </div>
 
 <div class="container bg-light">
-    <h5 class="mt-4 mb-4 pt-3 text-black-50"> Jobs for your review </h5>
+    <h5 class="mt-4 mb-4 pt-3 text-black-50"> Jobs for your review this month</h5>
     <div class="row">
         {% if jobs_under_review %} {% for q in jobs_under_review %}
         <div class="card ms-4 mb-3 shadow bg-body rounded p-0" style="width: 12rem;">
@@ -134,7 +134,7 @@
     </div>
 </div>
 <div class="container bg-light">
-    <h5 class="mt-4 mb-4 pt-3 text-black-50"> Jobs approved by you </h5>
+    <h5 class="mt-4 mb-4 pt-3 text-black-50"> Jobs approved by you this month</h5>
     <div class="row">
         {% if jobs_acceptably_done %} {% for q in jobs_acceptably_done %}
         <div class="card ms-4 mb-3 shadow bg-body rounded p-0" style="width: 12rem;">
@@ -164,7 +164,7 @@
     </div>
 </div>
 <div class="container bg-light">
-    <h5 class="mt-4 mb-4 pt-3 text-black-50"> Jobs rejected by you </h5>
+    <h5 class="mt-4 mb-4 pt-3 text-black-50"> Jobs rejected by you this month</h5>
     <div class="row">
         {% if jobs_review_rejected_by_admin %} {% for q in jobs_review_rejected_by_admin %}
         <div class="card ms-4 mb-3 shadow bg-body rounded p-0" style="width: 12rem;">
@@ -197,7 +197,7 @@
 
 {% else %}
 <div class="container bg-light">
-    <h5 class="mt-4 mb-4 pt-3 text-black-50">Jobs you accepted </h5>
+    <h5 class="mt-4 mb-4 pt-3 text-black-50">Jobs you accepted today</h5>
     <div class="row">
         {% if my_unfinished_jobs %} {% for q in my_unfinished_jobs %}
         <div class="card ms-4 mb-3 shadow bg-body rounded p-0" style="width: 12rem;">
@@ -250,7 +250,7 @@
 
 </div>
 <div class="container bg-light">
-    <h5 class="mt-4 mb-4 pt-3 text-black-50"> Jobs under review</h5>
+    <h5 class="mt-4 mb-4 pt-3 text-black-50"> Jobs under review this month</h5>
     <div class="row">
         {% if my_jobs_under_review %} {% for q in my_jobs_under_review %}
         <div class="card ms-4 mb-3 shadow bg-body rounded p-0" style="width: 12rem;">
@@ -281,7 +281,7 @@
 </div>
 
 <div class="container bg-light">
-    <h5 class="mt-4 mb-4 pt-3 text-black-50"> Jobs ready for payment</h5>
+    <h5 class="mt-4 mb-4 pt-3 text-black-50"> Jobs ready for payment this month</h5>
     <div class="row">
         {% if my_jobs_acceptably_done %} {% for q in my_jobs_acceptably_done %}
         <div class="card ms-4 mb-3 shadow bg-body rounded p-0" style="width: 12rem;">
@@ -309,13 +309,40 @@
         </div>
         {% endif %}
     </div>
-    {% endif %}
+
 
 
 
 </div>
+<div class="container bg-light">
+    <h5 class="mt-4 mb-4 pt-3 text-black-50"> Jobs rejected this month</h5>
+    <div class="row">
+        {% if my_jobs_review_rejected_by_admin %} {% for q in my_jobs_review_rejected_by_admin %}
+        <div class="card ms-4 mb-3 shadow bg-body rounded p-0" style="width: 12rem;">
+            <a class="btn p-0" href="{% url 'jobs:detail' q.id%}" style="width: 100%;">
+                <div class="card-body p-0 ">
+                    <div class="d-flex justify-content-between">
+                        <small class="card-text text-black-50 mt-1 ms-1">{{q.job_done_date.date}}</small>
+                        <h3 class="text-danger mt-1 me-1 "><small>$</small>{{q.job_price}}</h3>
+                    </div>
 
-{% endblock content %} {% block sidebar %}
+                    <h3 class="card-title pb-3 text-center text-black-50">{{ q.job_title }}</h3>
+
+                </div>
+                <a class="btn p-0" href="{% url 'jobs:detail' q.id%}" style="width: 100%;"></a>
+        </div>
+
+        {% endfor %} {% else %}
+        <div class="card ms-4 mb-3 shadow bg-body rounded p-0" style="width: 12rem;">
+            <div class="card-body mt-2 pb-0">
+                <p class="card-title pb-3 text-center text-black-50">Nothing here</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endif %} {% endblock content %} {% block sidebar %}
 <!-- <div class="col"> -->
 
 <div class="d-flex flex-row ">
@@ -409,7 +436,11 @@
                 <img class="m-2" src="{% static 'jobs/mymoney.png'%}" style="width: 36px; height: 36px;" alt="Card image">
                 <div class="">
                     {% if user.is_staff %}
-                    <p class="m-0 text-black-50">Payments Due</p>
+                    <p class="m-0 text-black-50">
+
+                        Payments Due
+
+                    </p>
                     {% else %}
                     <p class="m-0 text-black-50">Your Money</p>
                     {% endif %} {% if my_total_this_mont.job_price__sum != None %}

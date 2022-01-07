@@ -41,65 +41,25 @@
 
 <div class="container  p-2 m-2">
     <div class="row">
-        <p>{{date_today.date}}</p>
-
+        <h5 id="mykids">My Kids</h5>
+        {% for key, value in jobs_ready_for_payment_this_month.items %}
         <div class="col">
             <div class="card shadow">
-                <div class="card-header">Today</div>
+                <div class="card-header">
+                    <h5>{{key.first_name}} {{key.last_name}} </h5> <small>User ID : {{key.id}} </small></div>
                 <div class="card-body">
-                    {% if my_total_this_day.job_price__sum == None %}
-                    <p>Total money earned : $0</p>
+                    {% if value.job_price__sum == None %}
+                    <p>Total money earned this month : $0</p>
                     {% else %}
-                    <p>Total money earned : ${{my_total_this_day.job_price__sum}}</p>
-                    {% endif %} {% if unclaimed_this_day.job_price__sum == None %}
-                    <p>Total money missed : $0</p>
-                    {% else %}
-                    <p>Total money missed : ${{unclaimed_this_day.job_price__sum}}</p>
+                    <p>Total money earned this month : ${{value.job_price__sum}}</p>
                     {% endif %}
 
                 </div>
-                <div class="card-footer"></div>
+                <div class="card-footer"><a class="btn btn-success" href="{% url 'jobs:job_payments' %}">Pay Now</a></div>
             </div>
 
         </div>
-        <div class="col">
-            <div class="card shadow">
-                <div class="card-header">This Month</div>
-                <div class="card-body">
-
-                    {% if my_total_this_month.job_price__sum == None %}
-                    <p>Total money earned : $0</p>
-                    {% else %}
-                    <p>Total money earned : ${{my_total_this_month.job_price__sum}}</p>
-                    {% endif %} {% if unclaimed_this_month.job_price__sum == None %}
-                    <p>Total money missed : $0</p>
-                    {% else %}
-                    <p>Total money missed : ${{unclaimed_this_month.job_price__sum}}</p>
-                    {% endif %}
-
-                </div>
-                <div class="card-footer"></div>
-            </div>
-
-        </div>
-        <div class="col">
-            <div class="card shadow">
-                <div class="card-header">This Year</div>
-                <div class="card-body">
-                    {% if my_total_this_year.job_price__sum == None %}
-                    <p>Total money earned : $0</p>
-                    {% else %}
-                    <p>Total money earned : ${{my_total_this_year.job_price__sum}}</p>
-                    {% endif %} {% if unclaimed_this_year.job_price__sum == None %}
-                    <p>Total money missed : $0</p>
-                    {% else %}
-                    <p>Total money missed : ${{unclaimed_this_year.job_price__sum}}</p>
-                    {% endif %}
-                </div>
-                <div class="card-footer"></div>
-            </div>
-
-        </div>
+        {% endfor %}
 
 
 
@@ -181,7 +141,7 @@
 
 
 </div>
-{% endif %} Arslan = {{jobs_ready_for_payment_this_month.Arslan.job_price__sum }}, Sameen={{jobs_ready_for_payment_this_month.Sameen.job_price__sum }}{% endblock content %} {% block sidebar %}
+{% endif %} {% endblock content %} {% block sidebar %}
 <!-- <div class="col"> -->
 
 <div class="d-flex flex-row ">
