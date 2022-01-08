@@ -19,6 +19,7 @@ class Payments(models.Model):
 class JobPost(models.Model):
     job_title = models.CharField(max_length=200)
     publish_date = models.DateTimeField('date published', auto_now_add=True)
+    job_is_template = models.BooleanField(default=False)
     job_detail = models.CharField(max_length=200)
     job_price = models.IntegerField(default=0)
     job_taken = models.BooleanField(default=False)

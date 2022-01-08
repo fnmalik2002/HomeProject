@@ -16,6 +16,7 @@ from io import StringIO
 import numpy as np
 from .forms import NewJob
 from django.shortcuts import redirect
+import random
 
 
 my_money_under_review_this_month = None
@@ -47,7 +48,7 @@ def index(request):
     def job_creators(users_in_a_group):
         poster = None
         for u in users_in_a_group:
-            job_list_1 = JobPost.objects.filter(job_creator = u).order_by('-id')[:10] 
+            job_list_1 = JobPost.objects.filter(job_creator = u).order_by('-id') 
             print (u, job_list_1, len(job_list_1))
             if len(job_list_1) > 0:
                 print("job creator is", u.id)
@@ -68,45 +69,47 @@ def index(request):
     
     if request.user.is_staff:
         print("I am a staff")
-        my_jobs_under_review = this_family_jobs.filter(job_taker=user).filter(job_taken= True).filter(job_under_review= True).order_by('-id')[:10] 
-        my_jobs_acceptably_done = this_family_jobs.filter(job_taker=user).filter(job_taken=True).filter(job_done=True).filter(job_passed_review= True).order_by('-id')[:10]
+        my_jobs_under_review = this_family_jobs.filter(job_taker=user).filter(job_taken= True).filter(job_under_review= True).order_by('-id') 
+        my_jobs_acceptably_done = this_family_jobs.filter(job_taker=user).filter(job_taken=True).filter(job_done=True).filter(job_passed_review= True).order_by('-id')
         
-        jobs_under_review = this_family_jobs.filter(job_taken= True).filter(job_under_review= True).order_by('-id')[:10] 
-        jobs_acceptably_done = this_family_jobs.filter(job_taken=True).filter(job_done=True).filter(job_passed_review= True).order_by('-id')[:10]
-        jobs_review_rejected_by_admin = this_family_jobs.filter(job_taken=True).filter(job_done=True).filter(job_rejected_by_admin = True).order_by('-id')[:10]
-        my_jobs_review_rejected_by_admin = this_family_jobs.filter(job_taker=user).filter(job_taken=True).filter(job_done=True).filter(job_rejected_by_admin = True).order_by('-id')[:10]
+        jobs_under_review = this_family_jobs.filter(job_taken= True).filter(job_under_review= True).order_by('-id') 
+        jobs_acceptably_done = this_family_jobs.filter(job_taken=True).filter(job_done=True).filter(job_passed_review= True).filter(job_paid=False).order_by('-id')
+        jobs_review_rejected_by_admin = this_family_jobs.filter(job_taken=True).filter(job_done=True).filter(job_rejected_by_admin = True).order_by('-id')
+        my_jobs_review_rejected_by_admin = this_family_jobs.filter(job_taker=user).filter(job_taken=True).filter(job_done=True).filter(job_rejected_by_admin = True).order_by('-id')
+        jobs_paid = this_family_jobs.filter(job_taken=True).filter(job_done=True).filter(job_passed_review= True).filter(job_paid=True).order_by('-id')
+        
 
         job_list = this_family_jobs.filter(job_taken= False).order_by('-id')
-        job_gone = this_family_jobs.filter(job_taken= True).order_by('-id')[:10]
-        my_unfinished_jobs = this_family_jobs.filter(job_taker=user).filter(job_taken=True).filter(job_done=False).order_by('-id')[:10]
-        all_unfinished_jobs = this_family_jobs.filter(job_taken=True).filter(job_done=False).order_by('-id')[:10]
+        job_gone = this_family_jobs.filter(job_taken= True).order_by('-id')
+        my_unfinished_jobs = this_family_jobs.filter(job_taker=user).filter(job_taken=True).filter(job_done=False).order_by('-id')
+        all_unfinished_jobs = this_family_jobs.filter(job_taken=True).filter(job_done=False).order_by('-id')
 
-        my_done_jobs = this_family_jobs.filter(job_taker=user).filter(job_done=True).order_by('-id')[:10]
-        all_done_jobs = this_family_jobs.filter(job_taken=True).filter(job_done=True).order_by('-id')[:10]
+        my_done_jobs = this_family_jobs.filter(job_taker=user).filter(job_done=True).order_by('-id')
+        all_done_jobs = this_family_jobs.filter(job_taken=True).filter(job_done=True).order_by('-id')
         my_money_under_review_this_month = this_family_jobs.filter(job_taken=True).filter(job_under_review= True).filter(job_done=True).aggregate(Sum('job_price'))
         my_total_this_mont = this_family_jobs.filter(job_taken=True).filter(job_done=True).filter(job_passed_review= True).aggregate(Sum('job_price'))
         unclaimed = this_family_jobs.filter(job_taken= False).aggregate(Sum('job_price'))
 
     else:
         print("I am not a staff")
-        my_jobs_under_review = this_family_jobs.filter(job_taker=user).filter(job_taken= True).filter(job_under_review= True).order_by('-id')[:10] 
-        my_jobs_acceptably_done = this_family_jobs.filter(job_taker=user).filter(job_taken=True).filter(job_done=True).filter(job_passed_review= True).order_by('-id')[:10]
-        jobs_under_review = this_family_jobs.filter(job_taken= True).filter(job_under_review= True).order_by('-id')[:10] 
-        jobs_acceptably_done = this_family_jobs.filter(job_taken=True).filter(job_done=True).filter(job_passed_review= True).order_by('-id')[:10]
-        
+        my_jobs_under_review = this_family_jobs.filter(job_taker=user).filter(job_taken= True).filter(job_under_review= True).order_by('-id')
+        my_jobs_acceptably_done = this_family_jobs.filter(job_taker=user).filter(job_taken=True).filter(job_done=True).filter(job_passed_review= True).filter(job_paid=False).order_by('-id')
+        jobs_under_review = this_family_jobs.filter(job_taken= True).filter(job_under_review= True).order_by('-id') 
+        jobs_acceptably_done = this_family_jobs.filter(job_taken=True).filter(job_done=True).filter(job_passed_review= True).order_by('-id')
+        jobs_paid = this_family_jobs.filter(job_taken=True).filter(job_taker=user).filter(job_done=True).filter(job_passed_review= True).filter(job_paid=True).order_by('-id')
         
         job_list = this_family_jobs_today.filter(job_taken= False).order_by('-id')         
-        job_gone = this_family_jobs.filter(job_taken= True).order_by('-id')[:10]
-        my_unfinished_jobs = this_family_jobs.filter(job_taker=user).filter(job_taken=True).filter(job_done=False).order_by('-id')[:10]
-        all_unfinished_jobs = this_family_jobs_today.filter(job_taken=True).filter(job_done=False).order_by('-id')[:10]
-        my_done_jobs = this_family_jobs.filter(job_taker=user).filter(job_done=True).order_by('-id')[:10]
-        all_done_jobs = this_family_jobs.filter(job_taken=True).filter(job_done=True).order_by('-id')[:10]
+        job_gone = this_family_jobs.filter(job_taken= True).order_by('-id')
+        my_unfinished_jobs = this_family_jobs.filter(job_taker=user).filter(job_taken=True).filter(job_done=False).order_by('-id')
+        all_unfinished_jobs = this_family_jobs_today.filter(job_taken=True).filter(job_done=False).order_by('-id')
+        my_done_jobs = this_family_jobs.filter(job_taker=user).filter(job_done=True).order_by('-id')
+        all_done_jobs = this_family_jobs.filter(job_taken=True).filter(job_done=True).order_by('-id')
         
         my_money_under_review_this_month = this_family_jobs.filter(job_taker=user).filter(job_taken=True).filter(job_under_review= True).filter(job_done=True).aggregate(Sum('job_price'))
         my_total_this_mont = this_family_jobs.filter(job_taker=user).filter(job_taken=True).filter(job_done=True).filter(job_passed_review= True).aggregate(Sum('job_price'))
-        unclaimed = this_family_jobs.filter(job_taken= False).aggregate(Sum('job_price'))
-        my_jobs_review_rejected_by_admin = this_family_jobs.filter(job_taker=user).filter(job_taken=True).filter(job_done=True).filter(job_rejected_by_admin = True).order_by('-id')[:10]
-        jobs_review_rejected_by_admin = this_family_jobs.filter(job_taken=True).filter(job_done=True).filter(job_rejected_by_admin = True).order_by('-id')[:10]
+        unclaimed = this_family_jobs_today.filter(job_taken= False).aggregate(Sum('job_price'))
+        my_jobs_review_rejected_by_admin = this_family_jobs.filter(job_taker=user).filter(job_taken=True).filter(job_done=True).filter(job_rejected_by_admin = True).order_by('-id')
+        jobs_review_rejected_by_admin = this_family_jobs.filter(job_taken=True).filter(job_done=True).filter(job_rejected_by_admin = True).order_by('-id')
 
     
     template = loader.get_template('jobs/index.html')
@@ -134,6 +137,7 @@ def index(request):
      'date_today' : timezone.datetime.now(),
      'jobs_review_rejected_by_admin' : jobs_review_rejected_by_admin,
      'my_jobs_review_rejected_by_admin' : my_jobs_review_rejected_by_admin,
+     'jobs_paid' : jobs_paid,
      
 
      }
@@ -164,11 +168,11 @@ def payments(request):
     
     print(request.user, user.id)
     # if request.user.is_superuser:       
-    #     job_list = JobPost.objects.filter(job_taken= False).order_by('-id')[:10] 
-    #     job_gone = JobPost.objects.filter(job_taken= True).order_by('-id')[:10]
+    #     job_list = JobPost.objects.filter(job_taken= False).order_by('-id') 
+    #     job_gone = JobPost.objects.filter(job_taken= True).order_by('-id')
     # else:
-    #     job_list = JobPost.objects.filter(job_taker = user_id).order_by('-id')[:10] 
-    #     job_gone = JobPost.objects.filter(job_taken= True).order_by('-id')[:10]
+    #     job_list = JobPost.objects.filter(job_taker = user_id).order_by('-id') 
+    #     job_gone = JobPost.objects.filter(job_taken= True).order_by('-id')
     try:
         pk=request.POST['Choice']
         print("choice id : ", pk)
@@ -180,7 +184,7 @@ def payments(request):
     except Exception as e:
         print(e)
         
-    payment_list = JobPost.objects.filter(job_taken= True).filter(job_done= False).order_by('-id')[:10] 
+    payment_list = JobPost.objects.filter(job_taken= True).filter(job_done= False).order_by('-id') 
     template = loader.get_template('jobs/payments.html')
     if request.user == 'AnonymousUser':
         usr = "None"
@@ -293,10 +297,17 @@ def dashboard(request):
     my_total_this_year = get_this_family_jobs(request).filter(publish_date__year=date_today.year).filter(job_taker=request.user).filter(job_taken=True).filter(job_done=True).filter(job_passed_review= True).aggregate(Sum('job_price'))
 
     print("job = ", job_list)
-
-    
+    pays = get_this_family_jobs(request).filter(publish_date__year=date_today.year).filter(job_taker=request.user).filter(job_taken=True).filter(job_done=True).filter(job_passed_review= True).filter(job_paid=True)
+    payment_history = []
+    for p in pays:
+        p.job_payment_id.id
+        print(p)
+        payment_history.append(p.job_payment_id.id)
+        
+    print('payment_history = ', payment_history)
     def get_jobs_ready_for_payment_this_month(request):
         jobs = {}
+        
         user_group = Group.objects.get(user = request.user)
         users_in_a_group = User.objects.filter(groups=user_group)
         for u in users_in_a_group:
@@ -304,7 +315,7 @@ def dashboard(request):
                 pass
             else:
                 jobs[u] = get_this_family_jobs(request).filter(publish_date__month=date_today.month).filter(job_taker=u).filter(job_taken=True).filter(job_done=True).filter(job_passed_review= True).filter(job_paid= False).aggregate(Sum('job_price'))
-            
+                
         print("Family jobs this month : ", jobs)
         for key, value in jobs.items():
             print("JOBS for this family children : ", key, value)
@@ -325,6 +336,7 @@ def dashboard(request):
     'my_total_this_year' : my_total_this_year,
     'job_list' : job_list,
     'jobs_ready_for_payment_this_month' : get_jobs_ready_for_payment_this_month(request),
+    'payment_history' : payment_history,
 
      }
     return HttpResponse(template.render(context, request))
@@ -335,9 +347,7 @@ def new_job(request):
         if form.is_valid():
             post = form.save(commit=False)
             post.job_creator = request.user
-            # post.publish_date = timezone.now()
             post.save()
-            print("hello")
             return detail(request, pk=post.pk)
     else:
         form = NewJob()
@@ -385,7 +395,9 @@ def job_payments(request):
     this_kid_jobs_to_be_paid_this_month = get_this_family_jobs(request).filter(publish_date__month=date_today.month).filter(job_taker=this_kid).filter(job_taken=True).filter(job_done=True).filter(job_passed_review= True).filter(job_paid= False)
     this_kid_total_payment_this_month = this_kid_jobs_to_be_paid_this_month.aggregate(Sum('job_price'))['job_price__sum']
     # print("this_kid_total_payment_this_month = ", this_kid_total_payment_this_month)
-    uid = this_kid.first_name+"-"+str(date_today.month)+"-"+str(this_kid_total_payment_this_month)
+    
+    n = random.randint(1000,1000000)
+    uid = this_kid.first_name+"-"+str(date_today.month)+"-"+str(this_kid_total_payment_this_month)+"-"+str(n)
     print(uid)
 
 
@@ -402,7 +414,7 @@ def job_payments(request):
     print("This Kid Jobs This Month For Payment = ", this_kid_jobs_to_be_paid_this_month)
     for job in this_kid_jobs_to_be_paid_this_month:
         print(job)
-        job.job_paid=True
+        job.job_paid = True
         job.job_payment_id = pymnt
         job.save()
     

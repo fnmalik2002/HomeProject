@@ -8,28 +8,21 @@
         <form method="POST" class="post-form">
             {% csrf_token %}
             <div class="card shadow pb-3">
-                <div class="card-title bg-light p-2">
-                    <h4>New Job</h4>
+                <div class="card-title bg-light p-2 text-black-50">
+                    <h5>New job</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body text-black-50">
                     <div class="row">
-
                         <div class="col">
-
-                            <p class="p-0 m-0"><pre>Date created:   {{date_today}}</pre></p>
-                            <p class="p-0 m-0"><pre>Job title :     {{form.job_title}}</pre></p>
-                            <p class="p-0 m-0"><pre>Job detail :    {{form.job_detail}}</pre></p>
-                            <p class="p-0 m-0"><pre>Job price ($):  {{form.job_price}}</pre></p>
-
-
+                            <p class="p-0 ">Job title :&nbsp;&nbsp;&nbsp; &nbsp; &nbsp; {{form.job_title}}</p>
+                            <p class="p-0">Job detail : &nbsp;&nbsp;&nbsp; {{form.job_detail}}</p>
+                            <p class="p-0">Job price : &nbsp;&nbsp;$ {{form.job_price}}</p>
                         </div>
-
                     </div>
-
                 </div>
                 <div class="text-center ">
 
-                    <button type="submit" class="save btn btn-success w-75">Save</button>
+                    <button type="submit" class="save btn btn-success w-25">Save</button>
         </form>
         </div>
 
@@ -59,7 +52,7 @@
                             {% csrf_token %}
                             <input type="radio" id="accept2" name="Choice" value=0 checked style="display: none;">
                             <label for="accept2" style="display: none;"> Reset Jobs</label>
-                            <input type="submit" value="Reset Jobs" class="btn text-black-50 m-0 p-0" style="">
+                            <input type="submit" value="Reset Jobs" class="btn btn-success text-black-50 m-0 p-0" style="">
                         </form>
                     </div>
                 </div>
@@ -72,7 +65,7 @@
                 <div class="" style="width: 150px;">
                     <img class="m-2" src="{% static 'jobs/new_job.png' %}" style="width: 36px; height: 36px;" alt="Card image">
                     <div class="">
-                        <p class="m-0 text-black-50 fs-6">New Jobs</p>
+                        <p class="m-0 text-black-50 fs-6">Add new job</p>
                         <i class="btn text-black-50 fs-6">&nbsp;</i>
                     </div>
                 </div>
