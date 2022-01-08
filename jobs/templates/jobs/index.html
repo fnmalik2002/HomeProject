@@ -3,8 +3,9 @@
 
     <h5 class="p-1 m-0"> {{date_today.date}}</h5>
 </div>
+{% if user.is_staff %}
 <div class="container bg-light">
-    <h5 class="mt-4 mb-4 pt-3 text-black-50">Jobs available today</h5>
+    <h5 class="mt-4 mb-4 pt-3 text-black-50">Jobs available this month </h5>
 
 
     <div class="row justify-content-start flex-wrap">
@@ -24,15 +25,7 @@
                     <!-- <p class="text-dark">{{q.job_detail}}</p> -->
 
             </a>
-            <form class="text-center bg-info rounded-bottom" action="{% url 'jobs:payments' %}" method='post'>
-                {% csrf_token %}
 
-                <input type="radio" id="accept" name="Choice" value="{{q.id}}" checked style="display: none;">
-                <label for="accept" style="display: none;"> Accept</label>
-                <!-- <input type="radio" id="reject" name="Choice" value="-2">
-                <label for="reject"> Reject</label> -->
-                <input type="submit" value="Accept" class="btn btn-info text-white fs-6" style="width: 100%;">
-            </form>
             </div>
         </div>
         {% endfor %} {% else %}
@@ -48,9 +41,9 @@
     </div>
 
 </div>
-{% if user.is_staff %}
+
 <div class="container bg-light">
-    <h5 class="mt-4 mb-4 pt-3 text-black-50">Jobs taken today</h5>
+    <h5 class="mt-4 mb-4 pt-3 text-black-50">Jobs taken this month</h5>
     <div class="row">
         {% if all_unfinished_jobs %} {% for q in all_unfinished_jobs %}
         <div class="card ms-4 mb-3 shadow bg-body rounded p-0" style="width: 12rem;">
@@ -196,6 +189,52 @@
 
 
 {% else %}
+<div class="container bg-light">
+    <h5 class="mt-4 mb-4 pt-3 text-black-50">Jobs available today</h5>
+
+
+    <div class="row justify-content-start flex-wrap">
+
+        {% if job_list %} {% for q in job_list %}
+        <div class="card ms-4 mb-3 shadow rounded p-0" style="width: 12rem;">
+            <a class="btn p-0" href="{% url 'jobs:detail' q.id%}" style="width: 100%;">
+
+                <div class="card-body p-0">
+
+
+                    <div class="d-flex justify-content-between">
+                        <small class="card-text text-black-50 mt-1 ms-1">{{q.publish_date.date}}</small>
+                        <h3 class="text-danger mt-1 me-1 "><small>$</small>{{q.job_price}}</h3>
+                    </div>
+                    <h5 class="card-title pb-3 text-center text-black-50">{{ q.job_title }}</h5>
+                    <!-- <p class="text-dark">{{q.job_detail}}</p> -->
+
+            </a>
+            <form class="text-center bg-info rounded-bottom" action="{% url 'jobs:payments' %}" method='post'>
+                {% csrf_token %}
+
+                <input type="radio" id="accept" name="Choice" value="{{q.id}}" checked style="display: none;">
+                <label for="accept" style="display: none;"> Accept</label>
+                <!-- <input type="radio" id="reject" name="Choice" value="-2">
+                <label for="reject"> Reject</label> -->
+                <input type="submit" value="Accept" class="btn btn-info text-white fs-6" style="width: 100%;">
+            </form>
+            </div>
+        </div>
+        {% endfor %} {% else %}
+
+        <div class="card ms-4 mb-3 shadow bg-body rounded p-0" style="width: 12rem;">
+
+            <div class="card-body mt-2 pb-0">
+                <p class="card-title pb-3 text-center text-black-50">No jobs available</p>
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+
+</div>
+
 <div class="container bg-light">
     <h5 class="mt-4 mb-4 pt-3 text-black-50">Jobs you accepted today</h5>
     <div class="row">

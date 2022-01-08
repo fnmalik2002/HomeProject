@@ -62,7 +62,8 @@ def index(request):
     # print('current month :' , timezone.datetime.now().month)
     # print("Jobs on a specific date : ", JobPost.objects.filter(publish_date__month=date_today.month))
     this_family_jobs = JobPost.objects.filter(publish_date__month=date_today.month).filter(job_creator=job_creators(users_in_a_group))
-
+    this_family_jobs_today = JobPost.objects.filter(publish_date__day=date_today.day).filter(job_creator=job_creators(users_in_a_group))
+    
     print('this_family_jobs : ', this_family_jobs)
     
     if request.user.is_staff:
@@ -76,7 +77,6 @@ def index(request):
         my_jobs_review_rejected_by_admin = this_family_jobs.filter(job_taker=user).filter(job_taken=True).filter(job_done=True).filter(job_rejected_by_admin = True).order_by('-id')[:10]
 
         job_list = this_family_jobs.filter(job_taken= False).order_by('-id')
-        
         job_gone = this_family_jobs.filter(job_taken= True).order_by('-id')[:10]
         my_unfinished_jobs = this_family_jobs.filter(job_taker=user).filter(job_taken=True).filter(job_done=False).order_by('-id')[:10]
         all_unfinished_jobs = this_family_jobs.filter(job_taken=True).filter(job_done=False).order_by('-id')[:10]
@@ -94,13 +94,11 @@ def index(request):
         jobs_under_review = this_family_jobs.filter(job_taken= True).filter(job_under_review= True).order_by('-id')[:10] 
         jobs_acceptably_done = this_family_jobs.filter(job_taken=True).filter(job_done=True).filter(job_passed_review= True).order_by('-id')[:10]
         
-        print (this_family_jobs.filter())
-        job_list = this_family_jobs.filter(job_taken= False).order_by('-id') 
-        # print("publish_date : ", job_list)
         
+        job_list = this_family_jobs_today.filter(job_taken= False).order_by('-id')         
         job_gone = this_family_jobs.filter(job_taken= True).order_by('-id')[:10]
         my_unfinished_jobs = this_family_jobs.filter(job_taker=user).filter(job_taken=True).filter(job_done=False).order_by('-id')[:10]
-        all_unfinished_jobs = this_family_jobs.filter(job_taken=True).filter(job_done=False).order_by('-id')[:10]
+        all_unfinished_jobs = this_family_jobs_today.filter(job_taken=True).filter(job_done=False).order_by('-id')[:10]
         my_done_jobs = this_family_jobs.filter(job_taker=user).filter(job_done=True).order_by('-id')[:10]
         all_done_jobs = this_family_jobs.filter(job_taken=True).filter(job_done=True).order_by('-id')[:10]
         
@@ -136,6 +134,7 @@ def index(request):
      'date_today' : timezone.datetime.now(),
      'jobs_review_rejected_by_admin' : jobs_review_rejected_by_admin,
      'my_jobs_review_rejected_by_admin' : my_jobs_review_rejected_by_admin,
+     
 
      }
     return HttpResponse(template.render(context, request))
@@ -262,6 +261,9 @@ def mark_done(request):
                 job.job_taken_date = None
                 job.job_under_review = False
                 job.job_passed_review = False
+                job.job_paid = False
+                job.job_rejected_by_admin = False
+                job.job_expired = False
                 job.job_taker = User.objects.get(username = 'nouser')
                 job.save()
         except Exception as e:

@@ -1,4 +1,46 @@
 {% extends "jobs/base.html" %} {% load static %} {% block user %} {{user.first_name}} {{user.last_name}} {% endblock user %} {% block content %} {% if user.is_staff %}
+
+<div class="container  p-2 m-2">
+    <div class="row">
+        <h5 id="mykids">My Kids</h5>
+        {% for key, value in jobs_ready_for_payment_this_month.items %}
+        <div class="col">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h5>{{key.first_name}} {{key.last_name}} </h5> <small>User ID : {{key.id}} </small></div>
+                <div class="card-body">
+                    {% if value.job_price__sum == None %}
+                    <p>Total money earned in {{ date_today|date:'F Y' }} : $0</p>
+                    {% else %}
+                    <p>Total money earned in {{ date_today|date:'F Y' }} : ${{value.job_price__sum}}</p>
+                    {% endif %}
+
+                </div>
+                <div class="text-start">
+
+                    <form class="text-center bg-info rounded-bottom" action="{% url 'jobs:job_payments' %}" method='post'>
+                        {% csrf_token %}
+
+                        <input type="radio" id="accept" name="Choice" value="{{key.id}}" checked style="display: none;">
+                        <label for="accept" style="display: none;"> Accept</label>
+                        <!-- <input type="radio" id="reject" name="Choice" value="-2">
+                        <label for="reject"> Reject</label> -->
+                        <input type="submit" value="Pay Now" class="btn btn-success text-white fs-6" style="width: 100%;">
+                    </form>
+                </div>
+            </div>
+
+        </div>
+        {% endfor %}
+
+
+
+
+    </div>
+
+
+
+</div>
 <div class="container bg-light p-2 m-2">
     <h5 class="mt-4 mb-4 pt-3 text-black-50">Job List</h5>
 
@@ -37,49 +79,8 @@
 
 </div>
 
-<!-- _____________________________________ -->
-
-<div class="container  p-2 m-2">
-    <div class="row">
-        <h5 id="mykids">My Kids</h5>
-        {% for key, value in jobs_ready_for_payment_this_month.items %}
-        <div class="col">
-            <div class="card shadow">
-                <div class="card-header">
-                    <h5>{{key.first_name}} {{key.last_name}} </h5> <small>User ID : {{key.id}} </small></div>
-                <div class="card-body">
-                    {% if value.job_price__sum == None %}
-                    <p>Total money earned this month : $0</p>
-                    {% else %}
-                    <p>Total money earned in {{ date_today|date:'F Y' }} : ${{value.job_price__sum}}</p>
-                    {% endif %}
-
-                </div>
-                <div class="text-start">
-
-                    <form class="text-center bg-info rounded-bottom" action="{% url 'jobs:job_payments' %}" method='post'>
-                        {% csrf_token %}
-
-                        <input type="radio" id="accept" name="Choice" value="{{key.id}}" checked style="display: none;">
-                        <label for="accept" style="display: none;"> Accept</label>
-                        <!-- <input type="radio" id="reject" name="Choice" value="-2">
-                        <label for="reject"> Reject</label> -->
-                        <input type="submit" value="Pay Now" class="btn btn-success text-white fs-6" style="width: 100%;">
-                    </form>
-                </div>
-            </div>
-
-        </div>
-        {% endfor %}
 
 
-
-
-    </div>
-
-
-
-</div>
 <!-- ------- end admin --------- -->
 {% else %}
 
