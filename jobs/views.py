@@ -1,4 +1,5 @@
 from datetime import datetime
+import time
 from django.http import HttpResponseRedirect, HttpResponse
 # from django.http.request import HttpRequest
 from django.template import loader
@@ -275,6 +276,7 @@ def mark_not_done(request):
 @login_required
 def dashboard(request):
     date_today = timezone.datetime.now()
+    
 
     job_list = get_this_family_jobs(request)
     
@@ -299,7 +301,7 @@ def dashboard(request):
             if u.is_staff:
                 pass
             else:
-                jobs[u] = get_this_family_jobs(request).filter(publish_date__month=date_today.month).filter(job_taker=u).filter(job_taken=True).filter(job_done=True).filter(job_passed_review= True).aggregate(Sum('job_price'))
+                jobs[u] = get_this_family_jobs(request).filter(publish_date__month=date_today.month).filter(job_taker=u).filter(job_taken=True).filter(job_done=True).filter(job_passed_review= True).filter(job_paid= False).aggregate(Sum('job_price'))
             
         print("Family jobs this month : ", jobs)
         for key, value in jobs.items():
@@ -371,6 +373,38 @@ def repost_job(request, pk):
 def job_payments(request):
     print("job_payment is done")
     date_today = timezone.datetime.now()
+
+    pk=request.POST['Choice']
+    print("Payment choice id : ", pk)
+    print(type(pk))
+
+    this_kid = User.objects.get(id = pk)
+    print("This Kid = ", this_kid)
+    this_kid_jobs_to_be_paid_this_month = get_this_family_jobs(request).filter(publish_date__month=date_today.month).filter(job_taker=this_kid).filter(job_taken=True).filter(job_done=True).filter(job_passed_review= True).filter(job_paid= False)
+    this_kid_total_payment_this_month = this_kid_jobs_to_be_paid_this_month.aggregate(Sum('job_price'))['job_price__sum']
+    # print("this_kid_total_payment_this_month = ", this_kid_total_payment_this_month)
+    uid = this_kid.first_name+"-"+str(date_today.month)+"-"+str(this_kid_total_payment_this_month)
+    print(uid)
+
+
+
+    paid = Payments(payment_uid = uid, payment_amount = this_kid_total_payment_this_month, payment_note = "This is payment for all jobs this month for this kid")
+    paid.save()
+    
+    time.sleep(1)
+    pymnt = Payments.objects.get(payment_uid=uid)
+
+
+
+    print(pymnt)
+    print("This Kid Jobs This Month For Payment = ", this_kid_jobs_to_be_paid_this_month)
+    for job in this_kid_jobs_to_be_paid_this_month:
+        print(job)
+        job.job_paid=True
+        job.job_payment_id = pymnt
+        job.save()
+    
+    
     
     template = loader.get_template('jobs/dashboard.html')
     context = {

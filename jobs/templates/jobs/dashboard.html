@@ -51,11 +51,22 @@
                     {% if value.job_price__sum == None %}
                     <p>Total money earned this month : $0</p>
                     {% else %}
-                    <p>Total money earned this month : ${{value.job_price__sum}}</p>
+                    <p>Total money earned in {{ date_today|date:'F Y' }} : ${{value.job_price__sum}}</p>
                     {% endif %}
 
                 </div>
-                <div class="card-footer"><a class="btn btn-success" href="{% url 'jobs:job_payments' %}">Pay Now</a></div>
+                <div class="text-start">
+
+                    <form class="text-center bg-info rounded-bottom" action="{% url 'jobs:job_payments' %}" method='post'>
+                        {% csrf_token %}
+
+                        <input type="radio" id="accept" name="Choice" value="{{key.id}}" checked style="display: none;">
+                        <label for="accept" style="display: none;"> Accept</label>
+                        <!-- <input type="radio" id="reject" name="Choice" value="-2">
+                        <label for="reject"> Reject</label> -->
+                        <input type="submit" value="Pay Now" class="btn btn-success text-white fs-6" style="width: 100%;">
+                    </form>
+                </div>
             </div>
 
         </div>

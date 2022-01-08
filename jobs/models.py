@@ -9,10 +9,12 @@ class Payments(models.Model):
     # jobpost = models.ForeignKey(JobPost, on_delete=CASCADE)
     # payment_for_month = models.CharField(max_length=200)
     payment_amount = models.IntegerField(default=0)
-    payment_date = models.DateTimeField('payment date')
+    payment_date = models.DateTimeField('payment date', auto_now_add=True)
+    payment_note = models.CharField(max_length=200, default=None)
+    payment_uid = models.CharField(max_length=200, default=None)
 
     def __str__(self):
-        return self.job_detail
+        return self.payment_note
 
 class JobPost(models.Model):
     job_title = models.CharField(max_length=200)
