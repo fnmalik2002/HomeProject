@@ -1,11 +1,11 @@
-<!DOCTYPE html> {% load static %}
+<!DOCTYPE html> {% load static %}{% load crispy_forms_tags %}
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jobs Portal</title>
+    <title>Jobs Portal - Register</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="{% static 'jobs/style.css' %}">
@@ -17,18 +17,16 @@
     <div class="container d-flex justify-content-center">
 
         <div class="card m-5 p-5 shadow text-black-50">
-            <h3 class="text-success">Login</h3>
-            <div class="card-body text-center">
-                <form method="post">
-                    {% csrf_token %}
-
-                    <p> User Name {{ form.username}}</p>
-                    <p> Password&nbsp;&nbsp; {{ form.password}}</p>
-                    <input type="submit" value="Login" class="p-2 btn-success rounded">
+            <h3 class="text-success">Register</h3>
+            <div class="card-body text-start">
+                <form method="POST">
+                    {% csrf_token %} {{ register_form|crispy }}
+                    <button class="btn btn-primary" type="submit">Register</button>
                 </form>
+                <p></p>
+                <p class="text-start">If you already have an account, <a href="{% url 'jobs:index' %}">login</a> instead.</p>
             </div>
-            <p>Click <a href="{% url 'jobs:reset' %}">here</a> to reset your password.</p>
-            <p>or click <a href="{% url 'jobs:register' %}">here</a> to register.</p>
+
         </div>
 
     </div>

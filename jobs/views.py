@@ -18,6 +18,10 @@ from .forms import NewJob
 from django.shortcuts import redirect
 import random
 
+from .forms import NewUserForm
+from django.contrib.auth import login
+from django.contrib import messages
+
 
 my_money_under_review_this_month = None
 my_total_this_mont = None
@@ -38,8 +42,16 @@ def get_this_family_jobs(request):
 # Create your views here.
 @login_required
 def index(request):
-    print("user type : ",type(request.user))
+    print("index - user is : ",request.user)
     user = User.objects.get(username = request.user)
+    grps = request.user.groups.all()
+    if len(grps) == 0:
+        print("index - this user has no group")
+        new_group = Group(name = request.user)
+        new_group.save()
+        user.groups.add(new_group)
+    else:
+        print("index - this user belongs to group", grps)
     user_group = Group.objects.get(user = request.user)
     print('user_group \n', user_group)
     
@@ -428,3 +440,20 @@ def job_payments(request):
     # return HttpResponse(template.render(context, request))
     return dashboard(request)
 
+
+def register(request):
+    print("register clicked")
+    if request.method == "POST":
+        print("POST received")
+        form = NewUserForm(request.POST)
+        if form.is_valid():
+            print("form is validated")
+            user = form.save()
+            login(request, user)
+            messages.success(request, "Registration successful." )
+            return redirect("/")
+        else:
+            messages.error(request, "Unsuccessful registration. Invalid information.")
+    print("get form request received")
+    form = NewUserForm()
+    return render (request=request, template_name="registration/register.html", context={"register_form":form})
