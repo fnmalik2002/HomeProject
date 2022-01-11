@@ -39,6 +39,6 @@ class JobPost(models.Model):
         return self.job_title
     
     def was_published_recently(self):
-        return self.publish_date >= timezone.now() - datetime.timedelta(days=1)
+        return self.publish_date >= timezone.now() - timezone.timedelta(days=1)
 
 

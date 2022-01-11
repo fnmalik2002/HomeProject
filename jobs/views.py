@@ -14,7 +14,7 @@ from django.db.models import Avg, Count, Min, Sum
 import matplotlib.pyplot as plt
 from io import StringIO
 import numpy as np
-from .forms import NewJob
+from .forms import NewChildUserForm, NewJob
 from django.shortcuts import redirect
 import random
 
@@ -376,6 +376,7 @@ def new_job(request):
     return HttpResponse(template.render(context, request))
 
 def repost_job(request, pk):
+    date_today = timezone.datetime.now()
     print("JOB IS : ")
     this_job = JobPost.objects.get(id=pk)
     print("JOB IS : ", this_job.job_title, this_job.job_detail,this_job.job_price )
@@ -443,17 +444,41 @@ def job_payments(request):
 
 def register(request):
     print("register clicked")
-    if request.method == "POST":
-        print("POST received")
-        form = NewUserForm(request.POST)
-        if form.is_valid():
-            print("form is validated")
-            user = form.save()
-            login(request, user)
-            messages.success(request, "Registration successful." )
-            return redirect("/")
-        else:
-            messages.error(request, "Unsuccessful registration. Invalid information.")
-    print("get form request received")
-    form = NewUserForm()
-    return render (request=request, template_name="registration/register.html", context={"register_form":form})
+    print(request.user)
+    if request.user.is_authenticated:
+        print('user is not anonymous')
+        user_groups = Group.objects.get(user = request.user)
+        print("user group is : ", user_groups)
+        if request.method == "POST":
+            print("POST received")
+            form = NewChildUserForm(request.POST)
+            if form.is_valid():
+                print("form is validated")
+                user = form.save(user_groups)
+                login(request, user)
+                messages.success(request, "Registration successful." )
+                return redirect("/")
+            else:
+                messages.error(request, "Unsuccessful registration. Invalid information.")
+        print("get form request received from admin dashboard")
+        form = NewChildUserForm()
+        return render (request=request, template_name="registration/register.html", context={"register_form":form})
+
+
+    else:
+        print('user is anonymous')
+ 
+        if request.method == "POST":
+            print("POST received")
+            form = NewUserForm(request.POST)
+            if form.is_valid():
+                print("form is validated")
+                user = form.save()
+                login(request, user)
+                messages.success(request, "Registration successful." )
+                return redirect("/")
+            else:
+                messages.error(request, "Unsuccessful registration. Invalid information.")
+        print("get form request received from anonymous user")
+        form = NewUserForm()
+        return render (request=request, template_name="registration/register.html", context={"register_form":form})
