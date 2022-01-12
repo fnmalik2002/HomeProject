@@ -442,32 +442,7 @@
 <div class="d-flex flex-row ">
     <div class="d-flex flex-row ">
 
-        {% if user.is_staff %}
-        <div class=" mt-2 mb-2 text-center align-content-center border-start shadow-sm">
-            <a class="btn p-0" href="../admin/" style="width: 100%;">
-                <div class="" style="width: 150px;">
-
-                    <img class="m-2" src="{% static 'jobs/admin.png'%}" style="width: 36px; height: 36px;" alt="Card image">
-                    <div class="">
-                        <p class="m-0 text-black-50 fs-6">Admin Access</p>
-
-                        <form id="3" class="m-0 p-0" action="{% url 'jobs:mark_not_done' %}" method='post'>
-                            {% csrf_token %}
-                            <input type="radio" id="accept2" name="Choice" value=0 checked style="display: none;">
-                            <label for="accept2" style="display: none; "> Reset Jobs</label>
-
-
-                            <input type="submit" value="Reset Jobs" class="btn text-success m-0 p-0">
-                        </form>
-
-
-                    </div>
-                </div>
-
-            </a>
-        </div>
-
-        {% endif %}
+        {% if user.is_staff %} {% endif %}
         <div class=" mt-2 mb-2  text-center border-start shadow-sm">
             <a class="btn p-0" style="width: 100%;" href="{% url 'jobs:dashboard' %}">
                 <div class="" style="width: 150px;">

@@ -482,3 +482,12 @@ def register(request):
         print("get form request received from anonymous user")
         form = NewUserForm()
         return render (request=request, template_name="registration/register.html", context={"register_form":form})
+
+def delete_job(request, pk):
+    date_today = timezone.datetime.now()
+    
+    this_job = JobPost.objects.get(id=pk)
+    print(this_job)
+    print("JOB IS : ",this_job.id, this_job.job_title, this_job.job_detail, this_job.job_price )
+    this_job.delete()
+    return index(request)

@@ -53,9 +53,11 @@
                     </div>
                 </a>
                 {% if request.user.is_staff %}
-                <div class="d-flex ">
+                <div class="d-flex justify-content-around bg-light">
 
-                    <a class="btn btn-success align-self-center mr-2" href="{% url 'jobs:repost_job' detail.id%}" style="width: 100%;">Re-Post</a>
+                    <a class="btn btn-success align-self-center ms-1 my-1" href="{% url 'jobs:repost_job' detail.id%}" style="width: 50%;">Re-Post</a>
+
+                    <a class="btn btn-warning text-light align-self-center mx-1 my-1" href="{% url 'jobs:delete_job' detail.id%}" style="width: 50%;">Delete</a>
 
 
 
