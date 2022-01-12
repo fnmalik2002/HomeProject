@@ -13,8 +13,8 @@ class Payments(models.Model):
     payment_note = models.CharField(max_length=200, default=None)
     payment_uid = models.CharField(max_length=200, default=None)
 
-    def __str__(self):
-        return self.payment_note
+    # def __str__(self):
+    #     return str(self.id)
 
 class JobPost(models.Model):
     job_title = models.CharField(max_length=200)

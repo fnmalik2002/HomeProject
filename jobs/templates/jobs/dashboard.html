@@ -19,16 +19,8 @@
 
 
                         <div class="text-start">
-                            {% if value.job_price__sum == None %}
-                            <form class="text-center rounded-bottom" action="" method='post'>
-                                {% csrf_token %}
+                            {% if value.job_price__sum != None %}
 
-                                <input type="radio" id="accept" name="Choice" value="{{key.id}}" checked style="display: none;">
-                                <label for="accept" style="display: none;"> Pay Now</label>
-                                <input type="submit" value="Pay Now" class="btn btn-light text-white fs-6 ms-3">
-
-                            </form>
-                            {% else %}
                             <form class="text-center rounded-bottom" action="{% url 'jobs:job_payments' %}" method='post'>
                                 {% csrf_token %}
 
@@ -40,19 +32,7 @@
                             {% endif %}
                         </div>
                     </div>
-                    {% if payment_history %}
-                    <div class="">
-                        <h5>Payment History</h5>
-                        <p></p>
 
-
-                    </div>
-                    {% else %}
-                    <div class="">
-                        <h5>Payment History</h5>
-                        <p>No payment history found</p>
-                    </div>
-                    {% endif %}
 
                 </div>
             </div>
@@ -63,191 +43,215 @@
 
 
 
-    </div>
+        <div class="container bg-light p-2 m-2">
+            <div class="row">
 
+                <h5 id="mykidspayments" class="mb-4 mt-1 ms-1 text-black-50">Payment History</h5>
+                {% for key, value in payment_history.items %}
+                <div class="col-6">
+                    <div class="card shadow mb-3">
+                        <div class="card-header text-light bg-success">
+                            <h5>{{key.first_name}} {{key.last_name}} </h5>
+                        </div>
+                        <div class="card-body">
+                            {% for key, val in value.items %}
+                            <div class="d-flex">
+                                <div class="me-5">
+                                    <p>{{val.payment_date.date}}</p>
+                                </div>
+                                <div class="ms-5">
+                                    <p>${{val.payment_amount}}</p>
+                                </div>
+                            </div>
+                            {% endfor %}
 
-
-</div>
-<div class="container bg-light p-2 m-2">
-    <h5 class="mt-4 mb-4 pt-3 text-black-50">Job List</h5>
-    <div class="row justify-content-start flex-wrap">
-
-        {% if job_list %} {% for q in job_list %}
-        <div class="card ms-4 mb-3 shadow rounded p-0" style="width: 12rem;">
-            <a class="btn p-0" href="{% url 'jobs:detail' q.id%}" style="width: 100%;">
-                <div class="card-body p-0">
-                    <div class="d-flex justify-content-between">
-                        <small class="card-text text-black-50 mt-1 ms-1">{{q.publish_date.date}}</small>
-                        <h3 class="text-danger mt-1 me-1 "><small>$</small>{{q.job_price}}</h3>
+                        </div>
                     </div>
-                    <h5 class="card-title pb-3 text-center text-black-50">{{ q.job_title }}</h5>
-                    <!-- <p class="text-dark">{{q.job_detail}}</p> -->
-            </a>
-            </div>
-        </div>
-        {% endfor %} {% else %}
-
-        <div class="card ms-4 mb-3 shadow bg-body rounded p-0" style="width: 12rem;">
-
-            <div class="card-body mt-2 pb-0">
-                <p class="card-title pb-3 text-center text-black-50">No jobs available</p>
-            </div>
-        </div>
-        {% endif %}
-
-    </div>
-
-</div>
-
-
-
-<!-- ------- end admin --------- -->
-{% else %}
-
-<div class="container  p-2 m-2">
-    <div class="row">
-        <p>{{date_today.date}}</p>
-
-        <div class="col">
-            <div class="card shadow">
-                <div class="card-header">Today</div>
-                <div class="card-body">
-                    {% if my_total_this_day.job_price__sum == None %}
-                    <p>Total money earned : $0</p>
-                    {% else %}
-                    <p>Total money earned : ${{my_total_this_day.job_price__sum}}</p>
-                    {% endif %} {% if unclaimed_this_day.job_price__sum == None %}
-                    <p>Total money missed : $0</p>
-                    {% else %}
-                    <p>Total money missed : ${{unclaimed_this_day.job_price__sum}}</p>
-                    {% endif %}
-
                 </div>
-                <div class="card-footer"></div>
+                {% endfor %}
             </div>
-
         </div>
-        <div class="col">
-            <div class="card shadow">
-                <div class="card-header">This Month</div>
-                <div class="card-body">
-                    {% if my_total_this_month.job_price__sum == None %}
-                    <p>Total money earned : $0</p>
-                    {% else %}
-                    <p>Total money earned : ${{my_total_this_month.job_price__sum}}</p>
-                    {% endif %} {% if unclaimed_this_month.job_price__sum == None %}
-                    <p>Total money missed : $0</p>
-                    {% else %}
-                    <p>Total money missed : ${{unclaimed_this_month.job_price__sum}}</p>
-                    {% endif %}
 
-                </div>
-                <div class="card-footer"></div>
-            </div>
+        <div class="container bg-light p-2 m-2">
+            <h5 class="mt-4 mb-4 pt-3 text-black-50">Job List</h5>
+            <div class="row justify-content-start flex-wrap">
 
-        </div>
-        <div class="col">
-            <div class="card shadow">
-                <div class="card-header">This Year</div>
-                <div class="card-body">
-                    {% if my_total_this_year.job_price__sum == None %}
-                    <p>Total money earned : $0</p>
-                    {% else %}
-                    <p>Total money earned : ${{my_total_this_year.job_price__sum}}</p>
-                    {% endif %} {% if unclaimed_this_year.job_price__sum == None %}
-                    <p>Total money missed : $0</p>
-                    {% else %}
-                    <p>Total money missed : ${{unclaimed_this_year.job_price__sum}}</p>
-                    {% endif %}
+                {% if job_list %} {% for q in job_list %}
+                <div class="card ms-4 mb-3 shadow rounded p-0" style="width: 12rem;">
+                    <a class="btn p-0" href="{% url 'jobs:detail' q.id%}" style="width: 100%;">
+                        <div class="card-body p-0">
+                            <div class="d-flex justify-content-between">
+                                <small class="card-text text-black-50 mt-1 ms-1">{{q.publish_date.date}}</small>
+                                <h3 class="text-danger mt-1 me-1 "><small>$</small>{{q.job_price}}</h3>
+                            </div>
+                            <h5 class="card-title pb-3 text-center text-black-50">{{ q.job_title }}</h5>
+                            <!-- <p class="text-dark">{{q.job_detail}}</p> -->
+                    </a>
+                    </div>
                 </div>
-                <div class="card-footer"></div>
+                {% endfor %} {% else %}
+
+                <div class="card ms-4 mb-3 shadow bg-body rounded p-0" style="width: 12rem;">
+
+                    <div class="card-body mt-2 pb-0">
+                        <p class="card-title pb-3 text-center text-black-50">No jobs available</p>
+                    </div>
+                </div>
+                {% endif %}
+
             </div>
 
         </div>
 
 
 
+        <!-- ------- end admin --------- -->
+        {% else %}
 
-    </div>
+        <div class="container  p-2 m-2">
+            <div class="row">
+                <p>{{date_today.date}}</p>
 
+                <div class="col">
+                    <div class="card shadow">
+                        <div class="card-header">Today</div>
+                        <div class="card-body">
+                            {% if my_total_this_day.job_price__sum == None %}
+                            <p>Total money earned : $0</p>
+                            {% else %}
+                            <p>Total money earned : ${{my_total_this_day.job_price__sum}}</p>
+                            {% endif %} {% if unclaimed_this_day.job_price__sum == None %}
+                            <p>Total money missed : $0</p>
+                            {% else %}
+                            <p>Total money missed : ${{unclaimed_this_day.job_price__sum}}</p>
+                            {% endif %}
 
-
-</div>
-{% endif %} {% endblock content %} {% block sidebar %}
-<!-- <div class="col"> -->
-
-<div class="d-flex flex-row ">
-    <div class="d-flex flex-row ">
-
-        {% if user.is_staff %}
-        <div class=" mt-2 mb-2 text-center align-content-center border-start shadow-sm">
-            <a class="btn p-0" href="../admin/" style="width: 100%;">
-                <div class="" style="width: 150px;">
-
-                    <img class="m-2" src="{% static 'jobs/admin.png'%}" style="width: 36px; height: 36px;" alt="Card image">
-                    <div class="">
-                        <p class="m-0 text-black-50 fs-6">Admin Access</p>
-
-                        <form id="3" class="m-0 p-0" action="{% url 'jobs:mark_not_done' %}" method='post'>
-                            {% csrf_token %}
-                            <input type="radio" id="accept2" name="Choice" value=0 checked style="display: none;">
-                            <label for="accept2" style="display: none; "> Reset Jobs</label>
-
-
-                            <input type="submit" value="Reset Jobs" class="btn text-success m-0 p-0">
-                        </form>
-
-
+                        </div>
+                        <div class="card-footer"></div>
                     </div>
+
+                </div>
+                <div class="col">
+                    <div class="card shadow">
+                        <div class="card-header">This Month</div>
+                        <div class="card-body">
+                            {% if my_total_this_month.job_price__sum == None %}
+                            <p>Total money earned : $0</p>
+                            {% else %}
+                            <p>Total money earned : ${{my_total_this_month.job_price__sum}}</p>
+                            {% endif %} {% if unclaimed_this_month.job_price__sum == None %}
+                            <p>Total money missed : $0</p>
+                            {% else %}
+                            <p>Total money missed : ${{unclaimed_this_month.job_price__sum}}</p>
+                            {% endif %}
+
+                        </div>
+                        <div class="card-footer"></div>
+                    </div>
+
+                </div>
+                <div class="col">
+                    <div class="card shadow">
+                        <div class="card-header">This Year</div>
+                        <div class="card-body">
+                            {% if my_total_this_year.job_price__sum == None %}
+                            <p>Total money earned : $0</p>
+                            {% else %}
+                            <p>Total money earned : ${{my_total_this_year.job_price__sum}}</p>
+                            {% endif %} {% if unclaimed_this_year.job_price__sum == None %}
+                            <p>Total money missed : $0</p>
+                            {% else %}
+                            <p>Total money missed : ${{unclaimed_this_year.job_price__sum}}</p>
+                            {% endif %}
+                        </div>
+                        <div class="card-footer"></div>
+                    </div>
+
                 </div>
 
-            </a>
-        </div>
-        <div class=" mt-2 mb-2  text-center border-start shadow-sm">
-            <a class="btn p-0" style="width: 100%;" href="{% url 'jobs:add_user' %}">
-                <div class="" style="width: 150px;">
-                    <img class="m-2" src="{% static 'jobs/new_user.png' %}" style="width: 36px; height: 36px;" alt="Card image">
-                    <div class="">
-                        <p class="m-0 text-black-50 fs-6">Add User</p>
-                        <i class="btn text-black-50 fs-6">&nbsp;</i>
-                    </div>
-                </div>
-            </a>
 
 
-        </div>
 
+            </div>
 
-        <div class=" mt-2 mb-2  text-center border-start shadow-sm">
-            <a class="btn p-0" style="width: 100%;" href="{% url 'jobs:new_job' %}">
-                <div class="" style="width: 150px;">
-                    <img class="m-2" src="{% static 'jobs/new_job.png' %}" style="width: 36px; height: 36px;" alt="Card image">
-                    <div class="">
-                        <p class="m-0 text-black-50 fs-6">New Jobs</p>
-                        <i class="btn text-black-50 fs-6">&nbsp;</i>
-                    </div>
-                </div>
-            </a>
-
-
-        </div>
-        {% endif %}
-        <div class=" mt-2 mb-2  text-center border-start shadow-sm">
-            <a class="btn p-0" style="width: 100%;" href="/">
-                <div class="" style="width: 150px;">
-                    <img class="m-2" src="{% static 'jobs/home.png' %}" style="width: 36px; height: 36px;" alt="Card image">
-                    <div class="">
-                        <p class="m-0 text-black-50 fs-6">Home</p>
-                        <i class="btn text-black-50 fs-6">&nbsp;</i>
-                    </div>
-                </div>
-            </a>
 
 
         </div>
+        {% endif %} {% endblock content %} {% block sidebar %}
+        <!-- <div class="col"> -->
 
-    </div>
-</div>
+        <div class="d-flex flex-row ">
+            <div class="d-flex flex-row ">
+
+                {% if user.is_staff %}
+                <div class=" mt-2 mb-2 text-center align-content-center border-start shadow-sm">
+                    <a class="btn p-0" href="../admin/" style="width: 100%;">
+                        <div class="" style="width: 150px;">
+
+                            <img class="m-2" src="{% static 'jobs/admin.png'%}" style="width: 36px; height: 36px;" alt="Card image">
+                            <div class="">
+                                <p class="m-0 text-black-50 fs-6">Admin Access</p>
+
+                                <form id="3" class="m-0 p-0" action="{% url 'jobs:mark_not_done' %}" method='post'>
+                                    {% csrf_token %}
+                                    <input type="radio" id="accept2" name="Choice" value=0 checked style="display: none;">
+                                    <label for="accept2" style="display: none; "> Reset Jobs</label>
 
 
-{% endblock sidebar %}
+                                    <input type="submit" value="Reset Jobs" class="btn text-success m-0 p-0">
+                                </form>
+
+
+                            </div>
+                        </div>
+
+                    </a>
+                </div>
+                <div class=" mt-2 mb-2  text-center border-start shadow-sm">
+                    <a class="btn p-0" style="width: 100%;" href="{% url 'jobs:add_user' %}">
+                        <div class="" style="width: 150px;">
+                            <img class="m-2" src="{% static 'jobs/new_user.png' %}" style="width: 36px; height: 36px;" alt="Card image">
+                            <div class="">
+                                <p class="m-0 text-black-50 fs-6">Add User</p>
+                                <i class="btn text-black-50 fs-6">&nbsp;</i>
+                            </div>
+                        </div>
+                    </a>
+
+
+                </div>
+
+
+                <div class=" mt-2 mb-2  text-center border-start shadow-sm">
+                    <a class="btn p-0" style="width: 100%;" href="{% url 'jobs:new_job' %}">
+                        <div class="" style="width: 150px;">
+                            <img class="m-2" src="{% static 'jobs/new_job.png' %}" style="width: 36px; height: 36px;" alt="Card image">
+                            <div class="">
+                                <p class="m-0 text-black-50 fs-6">New Jobs</p>
+                                <i class="btn text-black-50 fs-6">&nbsp;</i>
+                            </div>
+                        </div>
+                    </a>
+
+
+                </div>
+                {% endif %}
+                <div class=" mt-2 mb-2  text-center border-start shadow-sm">
+                    <a class="btn p-0" style="width: 100%;" href="/">
+                        <div class="" style="width: 150px;">
+                            <img class="m-2" src="{% static 'jobs/home.png' %}" style="width: 36px; height: 36px;" alt="Card image">
+                            <div class="">
+                                <p class="m-0 text-black-50 fs-6">Home</p>
+                                <i class="btn text-black-50 fs-6">&nbsp;</i>
+                            </div>
+                        </div>
+                    </a>
+
+
+                </div>
+
+            </div>
+        </div>
+
+
+        {% endblock sidebar %}

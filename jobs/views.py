@@ -294,46 +294,48 @@ def mark_not_done(request):
 @login_required
 def dashboard(request):
     date_today = timezone.datetime.now()
-    
-
     job_list = get_this_family_jobs(request)
     
-
     unclaimed_this_day = get_this_family_jobs(request).filter(publish_date__day=date_today.day).filter(job_taken= False).aggregate(Sum('job_price'))  
     unclaimed_this_month = get_this_family_jobs(request).filter(publish_date__month=date_today.month).filter(job_taken= False).aggregate(Sum('job_price'))  
     unclaimed_this_year = get_this_family_jobs(request).filter(publish_date__year=date_today.year).filter(job_taken= False).aggregate(Sum('job_price'))  
-    
-    
+      
     my_total_this_day = get_this_family_jobs(request).filter(publish_date__day=date_today.day).filter(job_taker=request.user).filter(job_taken=True).filter(job_done=True).filter(job_passed_review= True).aggregate(Sum('job_price'))
     my_total_this_month = get_this_family_jobs(request).filter(publish_date__month=date_today.month).filter(job_taker=request.user).filter(job_taken=True).filter(job_done=True).filter(job_passed_review= True).aggregate(Sum('job_price'))
     my_total_this_year = get_this_family_jobs(request).filter(publish_date__year=date_today.year).filter(job_taker=request.user).filter(job_taken=True).filter(job_done=True).filter(job_passed_review= True).aggregate(Sum('job_price'))
 
     print("job = ", job_list)
-    pays = get_this_family_jobs(request).filter(publish_date__year=date_today.year).filter(job_taker=request.user).filter(job_taken=True).filter(job_done=True).filter(job_passed_review= True).filter(job_paid=True)
-    payment_history = []
-    for p in pays:
-        p.job_payment_id.id
-        print(p)
-        payment_history.append(p.job_payment_id.id)
+    
+    # def get_jobs_ready_for_payment_this_month(request):
+    jobs = {}
+    payments = {}
         
-    print('payment_history = ', payment_history)
-    def get_jobs_ready_for_payment_this_month(request):
-        jobs = {}
-        
-        user_group = Group.objects.get(user = request.user)
-        users_in_a_group = User.objects.filter(groups=user_group)
-        for u in users_in_a_group:
-            if u.is_staff:
-                pass
-            else:
-                jobs[u] = get_this_family_jobs(request).filter(publish_date__month=date_today.month).filter(job_taker=u).filter(job_taken=True).filter(job_done=True).filter(job_passed_review= True).filter(job_paid= False).aggregate(Sum('job_price'))
-                
-        print("Family jobs this month : ", jobs)
-        for key, value in jobs.items():
-            print("JOBS for this family children : ", key, value)
-        return jobs
+    user_group = Group.objects.get(user = request.user)
+    users_in_a_group = User.objects.filter(groups=user_group)
+    for u in users_in_a_group:
+        payment_history = {}
+        if u.is_staff:
+            pass
+        else:
+            jobs[u] = get_this_family_jobs(request).filter(publish_date__month=date_today.month).filter(job_taker=u).filter(job_taken=True).filter(job_done=True).filter(job_passed_review= True).filter(job_paid= False).aggregate(Sum('job_price'))
+            payms = get_this_family_jobs(request).filter(job_taker=u).filter(job_taken=True).filter(job_done=True).filter(job_passed_review= True).filter(job_paid= True)             
+            for p in payms:
+                p.job_payment_id.id
+                    
+                payment_history[p]= Payments.objects.get(id=p.job_payment_id.id)
+            payments[u] = payment_history
 
-    get_jobs_ready_for_payment_this_month(request)
+        
+
+    # print("Family jobs this month and year long payments  : ", jobs, payments)
+    # for key, value in jobs.items():
+    #     print("JOBS for this family children : ", key, value)
+        
+    for key, value in payments.items():
+        
+        print("PAYMENTS for this family children : ", value)
+    # return jobs, payments
+
 
 
     template = loader.get_template('jobs/dashboard.html')
@@ -347,8 +349,9 @@ def dashboard(request):
     'my_total_this_month' : my_total_this_month,
     'my_total_this_year' : my_total_this_year,
     'job_list' : job_list,
-    'jobs_ready_for_payment_this_month' : get_jobs_ready_for_payment_this_month(request),
-    'payment_history' : payment_history,
+    # 'jobs_ready_for_payment_this_month' : get_jobs_ready_for_payment_this_month(request).jobs,
+    'jobs_ready_for_payment_this_month' : jobs,
+    'payment_history' : payments,
 
      }
     return HttpResponse(template.render(context, request))
@@ -431,12 +434,12 @@ def job_payments(request):
         job.job_payment_id = pymnt
         job.save()
     
-    
-    
+
     template = loader.get_template('jobs/dashboard.html')
     context = {
         
         'date_today' : date_today,
+        
      }
     # return HttpResponse(template.render(context, request))
     return dashboard(request)
