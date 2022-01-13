@@ -1,10 +1,11 @@
 {% extends "jobs/base.html" %} {% load static %}{% block user %} {{user.first_name}} {{user.last_name}} {% endblock user %} {% block detail %}
 
 
-
+<div class="container bg-light">
 <div class="row mt-5">
     <div class="col"></div>
-    <div class="col-4 ">
+    <div class="col-6 p-3 text-black-50">
+    <h5> Add new job </h5>
         <form method="POST" class="post-form">
             {% csrf_token %}
             <div class="card shadow pb-3">
@@ -14,7 +15,7 @@
                 <div class="card-body text-black-50">
                     <div class="row">
                         <div class="col">
-                            <p class="p-0 ">Job title :&nbsp;&nbsp;&nbsp; &nbsp; &nbsp; {{form.job_title}}</p>
+                            <p class="p-0">Job title :&nbsp;&nbsp;&nbsp; &nbsp; &nbsp; {{form.job_title}}</p>
                             <p class="p-0">Job detail : &nbsp;&nbsp;&nbsp; {{form.job_detail}}</p>
                             <p class="p-0">Job price : &nbsp;&nbsp;$ {{form.job_price}}</p>
                         </div>
@@ -22,7 +23,7 @@
                 </div>
                 <div class="text-center ">
 
-                    <button type="submit" class="save btn btn-success w-25">Save</button>
+                    <button type="submit" class="save btn btn-success w-75">Save</button>
         </form>
         </div>
 
@@ -33,7 +34,7 @@
     </div>
     <div class="col"></div>
 </div>
-
+</div>
 
 
 {% endblock detail %} {% block sidebar %}
@@ -52,7 +53,7 @@
                             {% csrf_token %}
                             <input type="radio" id="accept2" name="Choice" value=0 checked style="display: none;">
                             <label for="accept2" style="display: none;"> Reset Jobs</label>
-                            <input type="submit" value="Reset Jobs" class="btn btn-success text-black-50 m-0 p-0" style="">
+                            <input type="submit" value="Reset Jobs" class="btn text-success m-0 p-0">
                         </form>
                     </div>
                 </div>
