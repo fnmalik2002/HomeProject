@@ -1,17 +1,17 @@
 {% extends "jobs/base.html" %} {% block user %} {{user.first_name}} {{user.last_name}} {% endblock user %} {% block detail %} {% load static %}
-<div class="container-fluid">
+<div class="container bg-light">
 
     {% if detail %}
     <div class="row justify-content-center">
 
         <div class="col-6 ">
-            <h2 class="py-3 text-start text-black-50">Job Details</h2>
+            <h5 class="py-3 text-start text-black-50">Job detail</h5>
 
-            <div class="card mb-4 shadow " style="width: 30rem;">
+            <div class="card mb-4 shadow rounded" style="width: 30rem;">
                 <a class="btn p-0" href="../" style="width: 100%;">
                     <div class="card-body p-0">
 
-                        <div class="card-header d-flex ps-2 m-0 bg-gray  justify-content-between">
+                        <div class="card-header d-flex ps-2 m-0 bg-gray  justify-content-between text-black-50">
                             Job ID : {{detail.id}}
 
                             <p class="text-black-50 ">Posted by : <strong>{{detail.job_creator.first_name}}</strong> </p>
@@ -42,7 +42,7 @@
 
 
 
-                    <div class="card-footer bg-gray mt-0 text-dark-50 text-start">
+                    <div class="card-footer bg-gray mt-0 text-black-50 text-start">
                         <p><small class="card-text ">Posted On : <strong> {{detail.publish_date.date}}</strong></small></p>
                         {% if detail.job_done %}
                         <p><small class="card-text">Finished On : <strong>{{detail.job_done_date.date}}</strong></small></p>
