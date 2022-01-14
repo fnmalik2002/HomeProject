@@ -12,23 +12,25 @@
     <script type="text/javascript" src="{% static 'jobs/script.js' %}"></script>
 </head>
 
-<body>
+<body class="has-bg-img ">
+ <img class=" my_img bg-img position-relative" src="{% static 'jobs/login_wallpaper.jpeg' %}" alt="background image" width="100%" height="100%">
+    <div class="container d-flex justify-content-center position-absolute bottom-0 end-0 ">
 
-    <div class="container d-flex justify-content-center">
-
-        <div class="card m-5 p-5 shadow text-black-50">
-            <h3 class="text-success">Login</h3>
-            <div class="card-body text-center">
+        <div class="card m-2 rounded shadow text-black-50">
+        <div class="card-header p-0 m-0 text-center p-1">
+            <h5 class="text-success ">House Jobs</h5>
+        </div>
+            
+            <div class="card-body text-center ">
                 <form method="post">
                     {% csrf_token %}
 
-                    <p> User Name {{ form.username}}</p>
-                    <p> Password&nbsp;&nbsp; {{ form.password}}</p>
-                    <input type="submit" value="Login" class="p-2 btn-success rounded">
+                    <p class="my-3"> User Name {{ form.username}}</p>
+                    <p class="my-3"> Password&nbsp;&nbsp; {{ form.password}}</p>
+                    <input type="submit" value="Login" class="p-2 btn-success rounded w-100 my-3">
                 </form>
             </div>
-            <p>Click <a href="{% url 'jobs:reset' %}">here</a> to reset your password.</p>
-            <p>or click <a href="{% url 'jobs:register' %}">here</a> to register.</p>
+            <p class="ps-3"><a href="{% url 'jobs:reset' %}">Reset</a> your password or <a href="{% url 'jobs:register' %}">Register</a> </p>
         </div>
 
     </div>
