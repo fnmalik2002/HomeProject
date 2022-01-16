@@ -13,8 +13,8 @@
 </head>
 
 <body class="has-bg-img ">
- <img class=" my_img bg-img position-relative" src="{% static 'jobs/login_wallpaper.jpeg' %}" alt="background image" width="100%" height="100%">
-    <div class="container d-flex justify-content-center position-absolute bottom-0 end-0 ">
+ <img class=" my_img bg-img row justify-content-center position-relative" src="{% static 'jobs/login_wallpaper.jpeg' %}" alt="background image" width="100%" height="100%">
+    <div class=" position-absolute translate-middle top-50 start-50 ">
 
         <div class="card m-2 rounded shadow text-black-50">
         <div class="card-header p-0 m-0 text-center p-1">
@@ -27,10 +27,12 @@
 
                     <p class="my-3"> User Name {{ form.username}}</p>
                     <p class="my-3"> Password&nbsp;&nbsp; {{ form.password}}</p>
-                    <input type="submit" value="Login" class="p-2 btn-success rounded w-100 my-3">
+                    <input type="submit" value="Login" class="p-2 px-4 btn-success rounded my-3">
                 </form>
             </div>
-            <p class="ps-3"><a href="{% url 'jobs:reset' %}">Reset</a> your password or <a href="{% url 'jobs:register' %}">Register</a> </p>
+            <div class="d-flex justify-content-center mb-4">
+            <p class=""><a href="{% url 'jobs:reset' %}">Reset</a> your password or <a href="{% url 'jobs:register' %}">Register</a> </p>
+            </div>
         </div>
 
     </div>
