@@ -458,8 +458,9 @@ def register(request):
             if form.is_valid():
                 print("form is validated")
                 user = form.save(user_groups)
-                login(request, user)
+                
                 messages.success(request, "Registration successful." )
+                login(request, user)
                 return redirect("/")
             else:
                 messages.error(request, "Unsuccessful registration. Invalid information.")
@@ -477,8 +478,8 @@ def register(request):
             if form.is_valid():
                 print("form is validated")
                 user = form.save()
-                login(request, user)
                 messages.success(request, "Registration successful." )
+                login(request, user)
                 return redirect("/")
             else:
                 messages.error(request, "Unsuccessful registration. Invalid information.")
