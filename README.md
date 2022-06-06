@@ -49,4 +49,23 @@ There will be a log of each payment paid to each child account in parent's dashb
 
 ![Kids Page](https://github.com/fnmalik2002/HomeProject/blob/main/Resources/child's%20dashboard.png)
 
+## Instructions
+
+Download the whole prject as zip file
+
+Extract all files in a folder
+
+using terminal navigate to the folder where you extracted the code files
+
+create a virtual environment there and install django in it alongwith any other imports if it gives error
+
+activate vertual environment and then run the webserver by typing python manage.py runserver
+
+The webserver will start at some local IP. Note that IP and copy paste it in your browser address bar 
+
+A login page will load. CLick on register to create your parent account
+
+All child accounts can be made inside parent account dashboard
+
+
 
