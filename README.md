@@ -1,8 +1,8 @@
 # HomeProject
-Home chores for kids that lets them earn money from their parents.
-
-## Tech used to build this project from scratch
 The front end of this project is designed, developed, tested, tweaked using Bootstrap4, CSS3, HTML5 and some Javascript while backend is made in django
+
+## Description
+Home chores for kids that lets them earn money from their parents.
 
 ## Features
 A web portal for parents to login, create and post daily home chores with a dollar value attached
