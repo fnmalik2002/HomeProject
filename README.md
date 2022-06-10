@@ -1,4 +1,4 @@
-# HomeProject
+# House Jobs
 The front end of this project is designed, developed, tested, tweaked using Bootstrap4, CSS3, HTML5 and some Javascript while backend is made in django
 
 ## Description
